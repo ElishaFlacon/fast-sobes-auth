@@ -23,7 +23,18 @@ const (
 	logsFile = "app.log"
 )
 
+func ensureLogDirectory() error {
+	if err := os.MkdirAll(logsDir, 0o755); err != nil {
+		return fmt.Errorf("failed to create logs directory: %w", err)
+	}
+	return nil
+}
+
 func NewLogger(bufSize int) *asyncLogger {
+	if err := ensureLogDirectory(); err != nil {
+		log.Fatalf("could not create logs directory: %v", err)
+	}
+
 	logFilePath := fmt.Sprintf("%s%s%s", logsDir, "/", logsFile)
 	const logFileFlags = os.O_CREATE | os.O_WRONLY | os.O_APPEND
 	const logFilePerm os.FileMode = 0o644
