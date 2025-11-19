@@ -9,6 +9,7 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 type App interface {
@@ -38,6 +39,7 @@ func NewApp(cfg *config.Config, log domain.Logger) App {
 			grpc_prometheus.StreamServerInterceptor,
 		)),
 	)
+	reflection.Register(a.server)
 	grpc_prometheus.Register(a.server)
 	grpc_prometheus.EnableHandlingTimeHistogram()
 
