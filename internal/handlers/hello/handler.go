@@ -3,7 +3,8 @@ package hello
 import (
 	"context"
 
-	pb "github.com/ElishaFlacon/fast-sobes-auth/internal/handlers/hello/proto"
+	"buf.build/gen/go/fast-sobes/proto/grpc/go/test/testgrpc"
+	"buf.build/gen/go/fast-sobes/proto/protocolbuffers/go/test"
 	"github.com/ElishaFlacon/fast-sobes-auth/internal/usecase"
 
 	"google.golang.org/grpc"
@@ -11,7 +12,7 @@ import (
 )
 
 type Implementation struct {
-	pb.UnimplementedHelloServer
+	testgrpc.UnimplementedHelloServer
 	usecase usecase.HelloUsecase
 }
 
@@ -22,10 +23,10 @@ func NewImplementation(uc usecase.HelloUsecase) *Implementation {
 }
 
 func (i *Implementation) RegisterImplementation(grpcServer *grpc.Server) {
-	pb.RegisterHelloServer(grpcServer, i)
+	testgrpc.RegisterHelloServer(grpcServer, i)
 }
 
-func (i *Implementation) Hello(ctx context.Context, _ *emptypb.Empty) (*pb.HelloResponse, error) {
+func (i *Implementation) Hello(ctx context.Context, _ *emptypb.Empty) (*test.HelloResponse, error) {
 	response := i.usecase.Hello()
-	return &pb.HelloResponse{Message: response}, nil
+	return &test.HelloResponse{Message: response}, nil
 }
