@@ -1,0 +1,33 @@
+services:
+  fast-sobes-auth:
+    container_name: fast-sobes-auth
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    restart: always
+    volumes:
+      - ./:/app
+    working_dir: /app
+    networks:
+      - fast-sobes-backend
+    tty: true
+    stdin_open: true
+
+  fast-sobes-auth-db:
+    image: postgres:12-alpine
+    container_name: fast-sobes-auth-db
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=auth_db
+    networks:
+      - fast-sobes-backend
+
+networks:
+  fast-sobes-backend:
+    driver: bridge
