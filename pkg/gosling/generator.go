@@ -91,7 +91,7 @@ type %sUsecase interface {
 		methods := ""
 		for _, method := range g.Methods {
 			methodCap := capitalize(method)
-			methods += fmt.Sprintf("\t%s(ctx context.Context) error\n", methodCap)
+			methods += fmt.Sprintf("\t%s() error\n", methodCap)
 		}
 		interfaceContent = fmt.Sprintf(`
 type %sUsecase interface {
@@ -138,7 +138,7 @@ type %sRepository interface {
 		methods := ""
 		for _, method := range g.Methods {
 			methodCap := capitalize(method)
-			methods += fmt.Sprintf("\t%s(ctx context.Context) error\n", methodCap)
+			methods += fmt.Sprintf("\t%s() error\n", methodCap)
 		}
 		interfaceContent = fmt.Sprintf(`
 type %sRepository interface {
@@ -322,7 +322,7 @@ import (
 	"context"
 )
 {{range .Methods}}
-func (u *usecase) {{. | Capitalize}}(ctx context.Context) error {
+func (u *usecase) {{. | Capitalize}}() error {
 	u.log.Infof("{{. | Capitalize}} called")
 	return nil
 }
@@ -368,7 +368,6 @@ func (r *repository) {{.ServiceNameCap}}Repository() error {
 	tmpl := `package {{.ServiceName}}
 
 import (
-	"context"
 	def "{{.ModulePath}}/internal/repository"
 )
 
@@ -381,7 +380,7 @@ func NewRepository() *repository {
 	return &repository{}
 }
 {{range .Methods}}
-func (r *repository) {{. | Capitalize}}(ctx context.Context) error {
+func (r *repository) {{. | Capitalize}}() error {
 	return nil
 }
 {{end}}
