@@ -82,7 +82,7 @@ gosling-make: gosling
 		echo "Error: SERVICE is required. Usage: make gosling-make SERVICE=<name>"; \
 		exit 1; \
 	fi
-	@CMD="$(GOSLING_BIN) make service $(SERVICE)"; \
+	@CMD="$(GOSLING_BIN) make $(SERVICE)"; \
 	if [ -n "$(NO_USECASE)" ]; then CMD="$$CMD --no-usecase"; fi; \
 	if [ -n "$(NO_REPOSITORY)" ]; then CMD="$$CMD --no-repository"; fi; \
 	if [ -n "$(NO_HANDLER)" ]; then CMD="$$CMD --no-handler"; fi; \
@@ -96,7 +96,7 @@ gosling-remove: gosling
 		echo "Error: SERVICE is required. Usage: make gosling-remove SERVICE=<name>"; \
 		exit 1; \
 	fi
-	@CMD="$(GOSLING_BIN) remove service $(SERVICE)"; \
+	@CMD="$(GOSLING_BIN) remove $(SERVICE)"; \
 	if [ -n "$(NO_USECASE)" ]; then CMD="$$CMD --no-usecase"; fi; \
 	if [ -n "$(NO_REPOSITORY)" ]; then CMD="$$CMD --no-repository"; fi; \
 	if [ -n "$(NO_HANDLER)" ]; then CMD="$$CMD --no-handler"; fi; \
@@ -105,10 +105,10 @@ gosling-remove: gosling
 	$$CMD
 
 
-gosling-install: gosling
-	@echo "Installing gosling globally..."
-	cp $(GOSLING_BIN) $(GOPATH)/bin/gosling
-	@echo "Gosling installed to $(GOPATH)/bin/gosling"
+# gosling-install: gosling
+# 	@echo "Installing gosling globally..."
+# 	cp $(GOSLING_BIN) $(GOPATH)/bin/gosling
+# 	@echo "Gosling installed to $(GOPATH)/bin/gosling"
 
 
 # ==============================================================================
