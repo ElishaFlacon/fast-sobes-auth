@@ -205,18 +205,18 @@ func (r *Remover) RemoveFromProvider() error {
 	content := string(data)
 
 	// Remove imports
-	importToRemove1 := fmt.Sprintf(`%sHandler "github.com/ElishaFlacon/fast-sobes-auth/internal/handlers/%s"`, r.serviceName, r.serviceName)
-	importToRemove2 := fmt.Sprintf(`%sUsecase "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase/%s"`, r.serviceName, r.serviceName)
-	importToRemove3 := fmt.Sprintf(`%sRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/%s"`, r.serviceName, r.serviceName)
+	importToRemove1 := fmt.Sprintf(`%sHandler "%s/internal/handlers/%s"`, r.serviceName, r.modulePath, r.serviceName)
+	importToRemove2 := fmt.Sprintf(`%sUsecase "%s/internal/usecase/%s"`, r.serviceName, r.modulePath, r.serviceName)
+	importToRemove3 := fmt.Sprintf(`%sRepository "%s/internal/repository/%s"`, r.serviceName, r.modulePath, r.serviceName)
 
 	content = removeLineContaining(content, importToRemove1)
 	content = removeLineContaining(content, importToRemove2)
 	content = removeLineContaining(content, importToRemove3)
 
-	// Remove struct fields
-	content = removeLineContaining(content, fmt.Sprintf("%sUsecase usecase.%sUsecase", r.serviceName, r.serviceNameCap))
-	content = removeLineContaining(content, fmt.Sprintf("%sHandler *%sHandler.Implementation", r.serviceName, r.serviceName))
-	content = removeLineContaining(content, fmt.Sprintf("%sRepository repository.%sRepository", r.serviceName, r.serviceNameCap))
+	// Remove struct fields more precisely
+	content = removeStructField(content, r.serviceName+"Usecase")
+	content = removeStructField(content, r.serviceName+"Handler")
+	content = removeStructField(content, r.serviceName+"Repository")
 
 	// Remove methods
 	content = removeMethod(content, fmt.Sprintf("func (p *Provider) %sHandler()", r.serviceNameCap))
@@ -224,6 +224,23 @@ func (r *Remover) RemoveFromProvider() error {
 	content = removeMethod(content, fmt.Sprintf("func (p *Provider) %sRepository()", r.serviceNameCap))
 
 	return os.WriteFile(providerPath, []byte(content), 0o644)
+}
+
+func removeStructField(content, fieldName string) string {
+	lines := strings.Split(content, "\n")
+	var newLines []string
+
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		// Ищем строки вида: "fieldName type" или "fieldName *type" или "fieldName type.Type"
+		if strings.HasPrefix(trimmed, fieldName+" ") || strings.HasPrefix(trimmed, fieldName+"\t") {
+			// Пропускаем эту строку
+			continue
+		}
+		newLines = append(newLines, line)
+	}
+
+	return strings.Join(newLines, "\n")
 }
 
 func removeLineContaining(content, substr string) string {
