@@ -13,7 +13,7 @@ CLI-утилита для автоматической генерации ком
 `make gosling-make SERVICE=name METHODS="method1 method2 method3"`
 
 # С пропуском слоев
-`make gosling-make SERVICE=name NO_HANDLER=true NO_REPOSITORY=true`
+`make gosling-make SERVICE=name NO_HANDLER=1 NO_REPOSITORY=1`
 
 ### Удаление сервиса
 
@@ -21,7 +21,7 @@ CLI-утилита для автоматической генерации ком
 `make gosling-remove SERVICE=name`
 
 # С пропуском слоев
-`make gosling-remove SERVICE=name NO_USECASE=true`
+`make gosling-remove SERVICE=name NO_USECASE=1`
 
 ## Флаги
 
