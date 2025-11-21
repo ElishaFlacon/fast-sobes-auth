@@ -15,18 +15,31 @@ type Generator struct {
 	HandlerPath    string
 	UsecasePath    string
 	RepositoryPath string
-	Methods        []string
+	Methods        []Method
+}
+
+type Method struct {
+	Name    string // lowercase для файлов (auth)
+	NameCap string // capitalized для методов (Auth)
 }
 
 func NewGenerator(serviceName, modulePath string, methods []string) *Generator {
+	normalizedMethods := make([]Method, len(methods))
+	for i, m := range methods {
+		normalizedMethods[i] = Method{
+			Name:    strings.ToLower(m),
+			NameCap: capitalize(strings.ToLower(m)),
+		}
+	}
+
 	return &Generator{
-		ServiceName:    serviceName,
-		ServiceNameCap: capitalize(serviceName),
+		ServiceName:    strings.ToLower(serviceName),
+		ServiceNameCap: capitalize(strings.ToLower(serviceName)),
 		ModulePath:     modulePath,
-		HandlerPath:    filepath.Join("internal", "handlers", serviceName),
-		UsecasePath:    filepath.Join("internal", "usecase", serviceName),
-		RepositoryPath: filepath.Join("internal", "repository", serviceName),
-		Methods:        methods,
+		HandlerPath:    filepath.Join("internal", "handlers", strings.ToLower(serviceName)),
+		UsecasePath:    filepath.Join("internal", "usecase", strings.ToLower(serviceName)),
+		RepositoryPath: filepath.Join("internal", "repository", strings.ToLower(serviceName)),
+		Methods:        normalizedMethods,
 	}
 }
 
@@ -35,8 +48,29 @@ func (g *Generator) GenerateHandler() error {
 		return err
 	}
 
-	handlerContent := g.generateHandlerContent()
-	return writeFile(filepath.Join(g.HandlerPath, "handler.go"), handlerContent)
+	// Генерация базового handler.go
+	handlerContent := g.generateHandlerBaseContent()
+	if err := writeFile(filepath.Join(g.HandlerPath, "handler.go"), handlerContent); err != nil {
+		return err
+	}
+
+	// Генерация файла для каждого метода или дефолтного файла
+	if len(g.Methods) == 0 {
+		// Дефолтный метод в отдельном файле
+		defaultContent := g.generateHandlerDefaultMethod()
+		return writeFile(filepath.Join(g.HandlerPath, g.ServiceName+".go"), defaultContent)
+	}
+
+	// Создаем отдельный файл для каждого метода
+	for _, method := range g.Methods {
+		methodContent := g.generateHandlerMethodContent(method)
+		filename := filepath.Join(g.HandlerPath, method.Name+".go")
+		if err := writeFile(filename, methodContent); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (g *Generator) GenerateUsecase() error {
@@ -44,14 +78,29 @@ func (g *Generator) GenerateUsecase() error {
 		return err
 	}
 
+	// Базовый usecase.go
 	usecaseContent := g.generateUsecaseContent()
-	usecaseImplContent := g.generateUsecaseImplContent()
-
 	if err := writeFile(filepath.Join(g.UsecasePath, "usecase.go"), usecaseContent); err != nil {
 		return err
 	}
 
-	return writeFile(filepath.Join(g.UsecasePath, g.ServiceName+".go"), usecaseImplContent)
+	// Генерация методов
+	if len(g.Methods) == 0 {
+		// Дефолтный метод
+		defaultContent := g.generateUsecaseDefaultMethod()
+		return writeFile(filepath.Join(g.UsecasePath, g.ServiceName+".go"), defaultContent)
+	}
+
+	// Отдельный файл для каждого метода
+	for _, method := range g.Methods {
+		methodContent := g.generateUsecaseMethodContent(method)
+		filename := filepath.Join(g.UsecasePath, method.Name+".go")
+		if err := writeFile(filename, methodContent); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (g *Generator) GenerateRepository() error {
@@ -59,14 +108,34 @@ func (g *Generator) GenerateRepository() error {
 		return err
 	}
 
-	repoContent := g.generateRepositoryContent()
-	return writeFile(filepath.Join(g.RepositoryPath, "repository.go"), repoContent)
+	// Базовый repository.go
+	repoContent := g.generateRepositoryBaseContent()
+	if err := writeFile(filepath.Join(g.RepositoryPath, "repository.go"), repoContent); err != nil {
+		return err
+	}
+
+	// Генерация методов
+	if len(g.Methods) == 0 {
+		// Дефолтный метод
+		defaultContent := g.generateRepositoryDefaultMethod()
+		return writeFile(filepath.Join(g.RepositoryPath, g.ServiceName+".go"), defaultContent)
+	}
+
+	// Отдельный файл для каждого метода
+	for _, method := range g.Methods {
+		methodContent := g.generateRepositoryMethodContent(method)
+		filename := filepath.Join(g.RepositoryPath, method.Name+".go")
+		if err := writeFile(filename, methodContent); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (g *Generator) UpdateUsecaseInterface() error {
 	usecaseFilePath := filepath.Join("internal", "usecase", "usecase.go")
 
-	// Read existing file
 	data, err := os.ReadFile(usecaseFilePath)
 	if err != nil {
 		return err
@@ -74,24 +143,21 @@ func (g *Generator) UpdateUsecaseInterface() error {
 
 	content := string(data)
 
-	// Check if interface already exists
 	if strings.Contains(content, "type "+g.ServiceNameCap+"Usecase interface") {
 		return fmt.Errorf("usecase interface '%s' already exists", g.ServiceNameCap+"Usecase")
 	}
 
-	// Generate interface
 	var interfaceContent string
 	if len(g.Methods) == 0 {
 		interfaceContent = fmt.Sprintf(`
 type %sUsecase interface {
-	%sUseCase() error
+    %sUseCase() error
 }
 `, g.ServiceNameCap, g.ServiceNameCap)
 	} else {
 		methods := ""
 		for _, method := range g.Methods {
-			methodCap := capitalize(method)
-			methods += fmt.Sprintf("\t%s() error\n", methodCap)
+			methods += fmt.Sprintf("\t%s() error\n", method.NameCap)
 		}
 		interfaceContent = fmt.Sprintf(`
 type %sUsecase interface {
@@ -99,7 +165,6 @@ type %sUsecase interface {
 `, g.ServiceNameCap, methods)
 	}
 
-	// Append to file
 	content = strings.TrimRight(content, "\n") + "\n" + interfaceContent
 
 	return os.WriteFile(usecaseFilePath, []byte(content), 0o644)
@@ -108,7 +173,6 @@ type %sUsecase interface {
 func (g *Generator) UpdateRepositoryInterface() error {
 	repoFilePath := filepath.Join("internal", "repository", "repository.go")
 
-	// Create file if not exists
 	if _, err := os.Stat(repoFilePath); os.IsNotExist(err) {
 		content := "package repository\n"
 		if err := writeFile(repoFilePath, content); err != nil {
@@ -131,14 +195,13 @@ func (g *Generator) UpdateRepositoryInterface() error {
 	if len(g.Methods) == 0 {
 		interfaceContent = fmt.Sprintf(`
 type %sRepository interface {
-	%sRepository() error
+    %sRepository() error
 }
 `, g.ServiceNameCap, g.ServiceNameCap)
 	} else {
 		methods := ""
 		for _, method := range g.Methods {
-			methodCap := capitalize(method)
-			methods += fmt.Sprintf("\t%s() error\n", methodCap)
+			methods += fmt.Sprintf("\t%s() error\n", method.NameCap)
 		}
 		interfaceContent = fmt.Sprintf(`
 type %sRepository interface {
@@ -165,14 +228,12 @@ func (g *Generator) UpdateProvider() error {
 		return fmt.Errorf("service '%s' already exists in provider", g.ServiceName)
 	}
 
-	// Add imports
 	importLines := []string{
-		fmt.Sprintf(`	%sHandler "%s/internal/handlers/%s"`, g.ServiceName, g.ModulePath, g.ServiceName),
-		fmt.Sprintf(`	%sUsecase "%s/internal/usecase/%s"`, g.ServiceName, g.ModulePath, g.ServiceName),
-		fmt.Sprintf(`	%sRepository "%s/internal/repository/%s"`, g.ServiceName, g.ModulePath, g.ServiceName),
+		fmt.Sprintf(`   %sHandler "%s/internal/handlers/%s"`, g.ServiceName, g.ModulePath, g.ServiceName),
+		fmt.Sprintf(`   %sUsecase "%s/internal/usecase/%s"`, g.ServiceName, g.ModulePath, g.ServiceName),
+		fmt.Sprintf(`   %sRepository "%s/internal/repository/%s"`, g.ServiceName, g.ModulePath, g.ServiceName),
 	}
 
-	// Find last import
 	lines := strings.Split(content, "\n")
 	var newLines []string
 	importInserted := false
@@ -187,7 +248,6 @@ func (g *Generator) UpdateProvider() error {
 			importInserted = true
 		}
 
-		// Add to Provider struct
 		if strings.Contains(line, "// Usecases") {
 			newLines = append(newLines, fmt.Sprintf("\t%sUsecase usecase.%sUsecase", g.ServiceName, g.ServiceNameCap))
 		}
@@ -200,7 +260,6 @@ func (g *Generator) UpdateProvider() error {
 			newLines = append(newLines, fmt.Sprintf("\t%sRepository repository.%sRepository", g.ServiceName, g.ServiceNameCap))
 		}
 
-		// Add methods
 		if strings.Contains(line, "// ----------------- gRPC HANDLER ------------------") && i+1 < len(lines) {
 			handlerMethod := g.generateProviderHandlerMethod()
 			newLines = append(newLines, "")
@@ -223,76 +282,101 @@ func (g *Generator) UpdateProvider() error {
 	return os.WriteFile(providerPath, []byte(strings.Join(newLines, "\n")), 0o644)
 }
 
-func (g *Generator) generateHandlerContent() string {
+// Шаблоны для Handler
+func (g *Generator) generateHandlerBaseContent() string {
 	tmpl := `package {{.ServiceName}}
 
 import (
-	"context"
+    "context"
 
-	"{{.ModulePath}}/internal/usecase"
+    "{{.ModulePath}}/internal/usecase"
 
-	"google.golang.org/grpc"
+    "google.golang.org/grpc"
 )
 
 type Implementation struct {
-	usecase usecase.{{.ServiceNameCap}}Usecase
+    usecase usecase.{{.ServiceNameCap}}Usecase
 }
 
 func NewImplementation(uc usecase.{{.ServiceNameCap}}Usecase) *Implementation {
-	return &Implementation{
-		usecase: uc,
-	}
+    return &Implementation{
+        usecase: uc,
+    }
 }
 
 func (i *Implementation) RegisterImplementation(grpcServer *grpc.Server) {
-	// Register your gRPC service here
+    // Register your gRPC service here
 }
-{{if .Methods}}
-{{range .Methods}}
-func (i *Implementation) {{. | Capitalize}}(ctx context.Context) error {
-	return i.usecase.{{. | Capitalize}}(ctx)
-}
-{{end}}
-{{else}}
-func (i *Implementation) {{.ServiceNameCap}}Handler(ctx context.Context) error {
-	return i.usecase.{{.ServiceNameCap}}UseCase()
-}
-{{end}}
 `
-	funcMap := template.FuncMap{
-		"Capitalize": capitalize,
-	}
-
-	t := template.Must(template.New("handler").Funcs(funcMap).Parse(tmpl))
+	t := template.Must(template.New("handler").Parse(tmpl))
 	var buf strings.Builder
 	t.Execute(&buf, g)
 	return buf.String()
 }
 
+func (g *Generator) generateHandlerDefaultMethod() string {
+	tmpl := `package {{.ServiceName}}
+
+import "context"
+
+func (i *Implementation) {{.ServiceNameCap}}Handler(ctx context.Context) error {
+    return i.usecase.{{.ServiceNameCap}}UseCase()
+}
+`
+	t := template.Must(template.New("handlerDefault").Parse(tmpl))
+	var buf strings.Builder
+	t.Execute(&buf, g)
+	return buf.String()
+}
+
+func (g *Generator) generateHandlerMethodContent(method Method) string {
+	tmpl := `package {{.ServiceName}}
+
+import "context"
+
+func (i *Implementation) {{.MethodNameCap}}(ctx context.Context) error {
+    return i.usecase.{{.MethodNameCap}}()
+}
+`
+	data := struct {
+		ServiceName   string
+		MethodNameCap string
+	}{
+		ServiceName:   g.ServiceName,
+		MethodNameCap: method.NameCap,
+	}
+
+	t := template.Must(template.New("handlerMethod").Parse(tmpl))
+	var buf strings.Builder
+	t.Execute(&buf, data)
+	return buf.String()
+}
+
+// Шаблоны для Usecase
 func (g *Generator) generateUsecaseContent() string {
 	tmpl := `package {{.ServiceName}}
 
 import (
-	"{{.ModulePath}}/internal/domain"
-	def "{{.ModulePath}}/internal/usecase"
-	"{{.ModulePath}}/internal/repository"
+    "{{.ModulePath}}/internal/domain"
+    def "{{.ModulePath}}/internal/usecase"
+    "{{.ModulePath}}/internal/repository"
 )
 
 var _ def.{{.ServiceNameCap}}Usecase = (*usecase)(nil)
 
 type usecase struct {
-	log        domain.Logger
-	repository repository.{{.ServiceNameCap}}Repository
+    log        domain.Logger
+    repository repository.{{.ServiceNameCap}}Repository
 }
 
 func NewUsecase(
-	log domain.Logger,
-	repository repository.{{.ServiceNameCap}}Repository,
+    log domain.Logger,
+    repository repository.{{.ServiceNameCap}}Repository,
 ) *usecase {
-	return &usecase{
-		log:        log,
-		repository: repository,
-	}
+    return &usecase{
+        log:        log,
+        repository: repository,
+    }
 }
 `
 	t := template.Must(template.New("usecase").Parse(tmpl))
@@ -301,49 +385,48 @@ func NewUsecase(
 	return buf.String()
 }
 
-func (g *Generator) generateUsecaseImplContent() string {
-	if len(g.Methods) == 0 {
-		tmpl := `package {{.ServiceName}}
+func (g *Generator) generateUsecaseDefaultMethod() string {
+	tmpl := `package {{.ServiceName}}
 
 func (u *usecase) {{.ServiceNameCap}}UseCase() error {
-	u.log.Infof("{{.ServiceNameCap}}UseCase called")
-	return nil
+    u.log.Infof("{{.ServiceNameCap}}UseCase called")
+    return nil
 }
 `
-		t := template.Must(template.New("usecaseImpl").Parse(tmpl))
-		var buf strings.Builder
-		t.Execute(&buf, g)
-		return buf.String()
-	}
-
-	tmpl := `package {{.ServiceName}}
-
-import (
-	"context"
-)
-{{range .Methods}}
-func (u *usecase) {{. | Capitalize}}() error {
-	u.log.Infof("{{. | Capitalize}} called")
-	return nil
-}
-{{end}}
-`
-	funcMap := template.FuncMap{
-		"Capitalize": capitalize,
-	}
-
-	t := template.Must(template.New("usecaseImpl").Funcs(funcMap).Parse(tmpl))
+	t := template.Must(template.New("usecaseDefault").Parse(tmpl))
 	var buf strings.Builder
 	t.Execute(&buf, g)
 	return buf.String()
 }
 
-func (g *Generator) generateRepositoryContent() string {
-	if len(g.Methods) == 0 {
-		tmpl := `package {{.ServiceName}}
+func (g *Generator) generateUsecaseMethodContent(method Method) string {
+	tmpl := `package {{.ServiceName}}
+
+func (u *usecase) {{.MethodNameCap}}() error {
+    u.log.Infof("{{.MethodNameCap}} called")
+    return nil
+}
+`
+	data := struct {
+		ServiceName   string
+		MethodNameCap string
+	}{
+		ServiceName:   g.ServiceName,
+		MethodNameCap: method.NameCap,
+	}
+
+	t := template.Must(template.New("usecaseMethod").Parse(tmpl))
+	var buf strings.Builder
+	t.Execute(&buf, data)
+	return buf.String()
+}
+
+// Шаблоны для Repository
+func (g *Generator) generateRepositoryBaseContent() string {
+	tmpl := `package {{.ServiceName}}
 
 import (
-	def "{{.ModulePath}}/internal/repository"
+    def "{{.ModulePath}}/internal/repository"
 )
 
 var _ def.{{.ServiceNameCap}}Repository = (*repository)(nil)
@@ -352,72 +435,73 @@ type repository struct {
 }
 
 func NewRepository() *repository {
-	return &repository{}
+    return &repository{}
 }
+`
+	t := template.Must(template.New("repository").Parse(tmpl))
+	var buf strings.Builder
+	t.Execute(&buf, g)
+	return buf.String()
+}
+
+func (g *Generator) generateRepositoryDefaultMethod() string {
+	tmpl := `package {{.ServiceName}}
 
 func (r *repository) {{.ServiceNameCap}}Repository() error {
-	return nil
+    return nil
 }
 `
-		t := template.Must(template.New("repository").Parse(tmpl))
-		var buf strings.Builder
-		t.Execute(&buf, g)
-		return buf.String()
-	}
-
-	tmpl := `package {{.ServiceName}}
-
-import (
-	def "{{.ModulePath}}/internal/repository"
-)
-
-var _ def.{{.ServiceNameCap}}Repository = (*repository)(nil)
-
-type repository struct {
-}
-
-func NewRepository() *repository {
-	return &repository{}
-}
-{{range .Methods}}
-func (r *repository) {{. | Capitalize}}() error {
-	return nil
-}
-{{end}}
-`
-	funcMap := template.FuncMap{
-		"Capitalize": capitalize,
-	}
-
-	t := template.Must(template.New("repository").Funcs(funcMap).Parse(tmpl))
+	t := template.Must(template.New("repositoryDefault").Parse(tmpl))
 	var buf strings.Builder
 	t.Execute(&buf, g)
 	return buf.String()
 }
 
+func (g *Generator) generateRepositoryMethodContent(method Method) string {
+	tmpl := `package {{.ServiceName}}
+
+func (r *repository) {{.MethodNameCap}}() error {
+    return nil
+}
+`
+	data := struct {
+		ServiceName   string
+		MethodNameCap string
+	}{
+		ServiceName:   g.ServiceName,
+		MethodNameCap: method.NameCap,
+	}
+
+	t := template.Must(template.New("repositoryMethod").Parse(tmpl))
+	var buf strings.Builder
+	t.Execute(&buf, data)
+	return buf.String()
+}
+
+// Provider методы
 func (g *Generator) generateProviderHandlerMethod() string {
 	return fmt.Sprintf(`func (p *Provider) %sHandler() *%sHandler.Implementation {
-	if p.%sHandler == nil {
-		p.%sHandler = %sHandler.NewImplementation(p.%sUsecase())
-	}
-	return p.%sHandler
+    if p.%sHandler == nil {
+        p.%sHandler = %sHandler.NewImplementation(p.%sUsecase())
+    }
+    return p.%sHandler
 }`, g.ServiceNameCap, g.ServiceName, g.ServiceName, g.ServiceName, g.ServiceName, g.ServiceNameCap, g.ServiceName)
 }
 
 func (g *Generator) generateProviderUsecaseMethod() string {
 	return fmt.Sprintf(`func (p *Provider) %sUsecase() usecase.%sUsecase {
-	if p.%sUsecase == nil {
-		p.%sUsecase = %sUsecase.NewUsecase(p.log, p.%sRepository())
-	}
-	return p.%sUsecase
+    if p.%sUsecase == nil {
+        p.%sUsecase = %sUsecase.NewUsecase(p.log, p.%sRepository())
+    }
+    return p.%sUsecase
 }`, g.ServiceNameCap, g.ServiceNameCap, g.ServiceName, g.ServiceName, g.ServiceName, g.ServiceNameCap, g.ServiceName)
 }
 
 func (g *Generator) generateProviderRepositoryMethod() string {
 	return fmt.Sprintf(`func (p *Provider) %sRepository() repository.%sRepository {
-	if p.%sRepository == nil {
-		p.%sRepository = %sRepository.NewRepository()
-	}
-	return p.%sRepository
-}`, g.ServiceNameCap, g.ServiceNameCap, g.ServiceName, g.ServiceName, g.ServiceName, g.ServiceName)
+    if p.%sRepository == nil {
+        p.%sRepository = %sRepository.NewRepository()
+    }
+    return p.%sRepository
+}`, g.ServiceNameCap, g.ServiceNameCap, g.ServiceName, g.ServiceName, g.ServiceName)
 }
