@@ -266,7 +266,7 @@ func (g *Generator) UpdateProvider() error {
 			newLines = append(newLines, handlerMethod)
 		}
 
-		if strings.Contains(line, "// -------------------- SERVICE --------------------") && i+1 < len(lines) {
+		if strings.Contains(line, "// -------------------- USECASE --------------------") && i+1 < len(lines) {
 			usecaseMethod := g.generateProviderUsecaseMethod()
 			newLines = append(newLines, "")
 			newLines = append(newLines, usecaseMethod)

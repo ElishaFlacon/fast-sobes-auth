@@ -7,10 +7,12 @@ toolchain go1.25.1
 require (
 	buf.build/gen/go/fast-sobes/proto/grpc/go v1.5.1-20251119195647-a9d1352f5efa.2
 	buf.build/gen/go/fast-sobes/proto/protocolbuffers/go v1.36.10-20251119195647-a9d1352f5efa.1
+	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/prometheus/client_golang v1.23.0
 	github.com/spf13/cobra v1.10.1
+	golang.org/x/crypto v0.38.0
 	google.golang.org/protobuf v1.36.10
 )
 
