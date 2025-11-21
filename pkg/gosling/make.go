@@ -48,7 +48,7 @@ func runMake(cmd *cobra.Command, args []string) error {
 		if err := generator.UpdateRepositoryInterface(); err != nil {
 			return fmt.Errorf("failed to update repository interface: %w", err)
 		}
-		fmt.Printf("✓ Repository generated for service '%s'\n", serviceName)
+		fmt.Printf("Repository generated for service '%s'\n", serviceName)
 	}
 
 	if !noUsecase {
@@ -58,24 +58,24 @@ func runMake(cmd *cobra.Command, args []string) error {
 		if err := generator.UpdateUsecaseInterface(); err != nil {
 			return fmt.Errorf("failed to update usecase interface: %w", err)
 		}
-		fmt.Printf("✓ Usecase generated for service '%s'\n", serviceName)
+		fmt.Printf("Usecase generated for service '%s'\n", serviceName)
 	}
 
 	if !noHandler {
 		if err := generator.GenerateHandler(); err != nil {
 			return fmt.Errorf("failed to generate handler: %w", err)
 		}
-		fmt.Printf("✓ Handler generated for service '%s'\n", serviceName)
+		fmt.Printf("Handler generated for service '%s'\n", serviceName)
 	}
 
 	if !noApp {
 		if err := generator.UpdateProvider(); err != nil {
 			return fmt.Errorf("failed to update provider: %w", err)
 		}
-		fmt.Printf("✓ Provider updated for service '%s'\n", serviceName)
+		fmt.Printf("Provider updated for service '%s'\n", serviceName)
 	}
 
-	fmt.Printf("\n🎉 Service '%s' generated successfully!\n", serviceName)
+	fmt.Printf("\nService '%s' generated successfully!\n", serviceName)
 	fmt.Println("\nNext steps:")
 	fmt.Printf("1. Define your protobuf service and regenerate code\n")
 	fmt.Printf("2. Register handler in internal/app/app.go: a.provider.%sHandler().RegisterImplementation(a.server)\n", capitalize(serviceName))

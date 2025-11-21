@@ -41,39 +41,39 @@ func runRemove(cmd *cobra.Command, args []string) error {
 
 	if !rmNoRepository {
 		if err := remover.RemoveRepository(); err != nil {
-			fmt.Printf("⚠ Warning: failed to remove repository: %v\n", err)
+			fmt.Printf("Warning: failed to remove repository: %v\n", err)
 		} else {
-			fmt.Printf("✓ Repository removed for service '%s'\n", serviceName)
+			fmt.Printf("Repository removed for service '%s'\n", serviceName)
 		}
 		if err := remover.RemoveRepositoryInterface(); err != nil {
-			fmt.Printf("⚠ Warning: failed to update repository interface: %v\n", err)
+			fmt.Printf("Warning: failed to update repository interface: %v\n", err)
 		}
 	}
 
 	if !rmNoUsecase {
 		if err := remover.RemoveUsecase(); err != nil {
-			fmt.Printf("⚠ Warning: failed to remove usecase: %v\n", err)
+			fmt.Printf("Warning: failed to remove usecase: %v\n", err)
 		} else {
-			fmt.Printf("✓ Usecase removed for service '%s'\n", serviceName)
+			fmt.Printf("Usecase removed for service '%s'\n", serviceName)
 		}
 		if err := remover.RemoveUsecaseInterface(); err != nil {
-			fmt.Printf("⚠ Warning: failed to update usecase interface: %v\n", err)
+			fmt.Printf("Warning: failed to update usecase interface: %v\n", err)
 		}
 	}
 
 	if !rmNoHandler {
 		if err := remover.RemoveHandler(); err != nil {
-			fmt.Printf("⚠ Warning: failed to remove handler: %v\n", err)
+			fmt.Printf("Warning: failed to remove handler: %v\n", err)
 		} else {
-			fmt.Printf("✓ Handler removed for service '%s'\n", serviceName)
+			fmt.Printf("Handler removed for service '%s'\n", serviceName)
 		}
 	}
 
 	if !rmNoApp {
 		if err := remover.RemoveFromProvider(); err != nil {
-			fmt.Printf("⚠ Warning: failed to update provider: %v\n", err)
+			fmt.Printf("Warning: failed to update provider: %v\n", err)
 		} else {
-			fmt.Printf("✓ Provider cleaned for service '%s'\n", serviceName)
+			fmt.Printf("Provider cleaned for service '%s'\n", serviceName)
 		}
 	}
 

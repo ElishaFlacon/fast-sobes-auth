@@ -82,7 +82,12 @@ gosling-make: gosling
 		echo "Error: SERVICE is required. Usage: make gosling-make SERVICE=<name>"; \
 		exit 1; \
 	fi
-	@CMD="$(GOSLING_BIN) make $(SERVICE)"; \
+	@CMD="$(GOSLING_BIN) make service $(SERVICE)"; \
+	if [ -n "$(METHODS)" ]; then \
+		for method in $(METHODS); do \
+			CMD="$$CMD --method $$method"; \
+		done; \
+	fi; \
 	if [ -n "$(NO_USECASE)" ]; then CMD="$$CMD --no-usecase"; fi; \
 	if [ -n "$(NO_REPOSITORY)" ]; then CMD="$$CMD --no-repository"; fi; \
 	if [ -n "$(NO_HANDLER)" ]; then CMD="$$CMD --no-handler"; fi; \
@@ -96,7 +101,7 @@ gosling-remove: gosling
 		echo "Error: SERVICE is required. Usage: make gosling-remove SERVICE=<name>"; \
 		exit 1; \
 	fi
-	@CMD="$(GOSLING_BIN) remove $(SERVICE)"; \
+	@CMD="$(GOSLING_BIN) remove service $(SERVICE)"; \
 	if [ -n "$(NO_USECASE)" ]; then CMD="$$CMD --no-usecase"; fi; \
 	if [ -n "$(NO_REPOSITORY)" ]; then CMD="$$CMD --no-repository"; fi; \
 	if [ -n "$(NO_HANDLER)" ]; then CMD="$$CMD --no-handler"; fi; \
