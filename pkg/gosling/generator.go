@@ -343,7 +343,6 @@ func (g *Generator) generateRepositoryContent() string {
 		tmpl := `package {{.ServiceName}}
 
 import (
-	"context"
 	def "{{.ModulePath}}/internal/repository"
 )
 
@@ -421,5 +420,5 @@ func (g *Generator) generateProviderRepositoryMethod() string {
 		p.%sRepository = %sRepository.NewRepository()
 	}
 	return p.%sRepository
-}`, g.ServiceNameCap, g.ServiceNameCap, g.ServiceName, g.ServiceName, g.ServiceName)
+}`, g.ServiceNameCap, g.ServiceNameCap, g.ServiceName, g.ServiceName, g.ServiceName, g.ServiceName)
 }
