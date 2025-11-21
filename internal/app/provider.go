@@ -19,7 +19,6 @@ type Provider struct {
 	helloHandler *helloHandler.Implementation
 
 	// Repositories
-	// ---
 }
 
 func NewProvider(cfg *config.Config, log domain.Logger) *Provider {
