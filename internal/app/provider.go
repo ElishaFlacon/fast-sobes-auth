@@ -17,10 +17,12 @@ import (
 	authUsecase "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase/auth"
 	helloUsecase "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase/hello"
 	settingsUsecase "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase/settings"
+	"gorm.io/gorm"
 )
 
 type Provider struct {
 	cfg *config.Config
+	db  *gorm.DB
 	log domain.Logger
 
 	// Usecases
@@ -42,9 +44,10 @@ type Provider struct {
 	settingsRepository  repository.SettingsRepository
 }
 
-func NewProvider(cfg *config.Config, log domain.Logger) *Provider {
+func NewProvider(cfg *config.Config, db *gorm.DB, log domain.Logger) *Provider {
 	return &Provider{
 		cfg: cfg,
+		db:  db,
 		log: log,
 	}
 }
@@ -107,42 +110,42 @@ func (p *Provider) HelloUsecase() usecase.HelloUsecase {
 
 func (p *Provider) EmailRepository() repository.EmailRepository {
 	if p.emailRepository == nil {
-		p.emailRepository = emailRepository.NewRepository()
+		p.emailRepository = emailRepository.NewRepository(p.db)
 	}
 	return p.emailRepository
 }
 
 func (p *Provider) TwoFactorRepository() repository.TwoFactorRepository {
 	if p.twoFactorRepository == nil {
-		p.twoFactorRepository = twoFactorRepository.NewRepository()
+		p.twoFactorRepository = twoFactorRepository.NewRepository(p.db)
 	}
 	return p.twoFactorRepository
 }
 
 func (p *Provider) TokenRepository() repository.TokenRepository {
 	if p.tokenRepository == nil {
-		p.tokenRepository = tokenRepository.NewRepository()
+		p.tokenRepository = tokenRepository.NewRepository(p.db)
 	}
 	return p.tokenRepository
 }
 
 func (p *Provider) PasswordRepository() repository.PasswordRepository {
 	if p.passwordRepository == nil {
-		p.passwordRepository = passwordRepository.NewRepository()
+		p.passwordRepository = passwordRepository.NewRepository(p.db)
 	}
 	return p.passwordRepository
 }
 
 func (p *Provider) UserRepository() repository.UserRepository {
 	if p.userRepository == nil {
-		p.userRepository = userRepository.NewRepository()
+		p.userRepository = userRepository.NewRepository(p.db)
 	}
 	return p.userRepository
 }
 
 func (p *Provider) SettingsRepository() repository.SettingsRepository {
 	if p.settingsRepository == nil {
-		p.settingsRepository = settingsRepository.NewRepository()
+		p.settingsRepository = settingsRepository.NewRepository(p.db)
 	}
 	return p.settingsRepository
 }

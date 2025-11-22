@@ -1,8 +1,9 @@
-package infrastructure
+package postgres
 
 import (
 	"fmt"
 
+	"github.com/ElishaFlacon/fast-sobes-auth/internal/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -17,7 +18,7 @@ type Config struct {
 	SSLMode  string
 }
 
-func NewPostgresConnection(cfg Config) (*gorm.DB, error) {
+func NewPostgres(cfg *Config, log domain.Logger) (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode,
