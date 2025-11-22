@@ -38,12 +38,12 @@ func NewConfig() *Config {
 	}
 
 	pgCfg := &PgConfig{
-		Host:     getEnv("POSTGRES_HOST", "5000"),
+		Host:     getEnv("POSTGRES_HOST", "fast-sobes-auth-db"),
 		Port:     getIntEnv("POSTGRES_PORT", 5432),
-		User:     getEnv("POSTGRES_USER", "5000"),
-		Password: getEnv("POSTGRES_PASSWORD", "5000"),
-		DBName:   getEnv("POSTGRES_DB", "5000"),
-		SSLMode:  getEnv("POSTGRES_SSL", "0"),
+		User:     getEnv("POSTGRES_USER", "postgres"),
+		Password: getEnv("POSTGRES_PASSWORD", "postgres"),
+		DBName:   getEnv("POSTGRES_DB", "auth"),
+		SSLMode:  getEnv("POSTGRES_SSL", "disable"),
 	}
 
 	logCfg := &LoggerConfig{

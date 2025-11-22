@@ -38,12 +38,24 @@ type AuthUsecase interface {
 	DisableUser(ctx context.Context, userID string) error
 	EnableUser(ctx context.Context, userID string) error
 	GetUser(ctx context.Context, userID string) (*domain.User, error)
-	ListUsers(ctx context.Context, page, pageSize int32, minPermissionLevel *int32, includeDisabled bool) (*domain.UserList, error)
+	ListUsers(
+		ctx context.Context,
+		page, pageSize int32,
+		minPermissionLevel *int32,
+		includeDisabled bool,
+	) (*domain.UserList, error)
 	DeleteUser(ctx context.Context, userID string) error
 }
 
 type SettingsUsecase interface {
 	GetSettings(ctx context.Context) (*domain.Settings, error)
-	UpdateSettings(ctx context.Context, req *domain.UpdateSettingsRequest) (*domain.Settings, error)
+	UpdateSettings(
+		ctx context.Context,
+		requireTwoFactor *bool,
+		tokenTTLMinutes *int32,
+		refreshTokenTTLDays *int32,
+		minPasswordLength *int32,
+		requirePasswordComplexity *bool,
+	) (*domain.Settings, error)
 	ResetSettings(ctx context.Context) (*domain.Settings, error)
 }

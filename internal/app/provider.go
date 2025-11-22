@@ -11,7 +11,7 @@ import (
 	passwordRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/password"
 	settingsRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/settings"
 	tokenRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/token"
-	twoFactorRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/twofactor"
+	twoFactorRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/two-factor"
 	userRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/user"
 	"github.com/ElishaFlacon/fast-sobes-auth/internal/usecase"
 	authUsecase "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase/auth"

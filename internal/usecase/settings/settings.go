@@ -15,7 +15,11 @@ func (u *usecase) GetSettings(ctx context.Context) (*domain.Settings, error) {
 
 func (u *usecase) UpdateSettings(
 	ctx context.Context,
-	req *domain.UpdateSettingsRequest,
+	requireTwoFactor *bool,
+	tokenTTLMinutes *int32,
+	refreshTokenTTLDays *int32,
+	minPasswordLength *int32,
+	requirePasswordComplexity *bool,
 ) (*domain.Settings, error) {
 	u.log.Infof("Update settings")
 
@@ -26,29 +30,29 @@ func (u *usecase) UpdateSettings(
 	}
 
 	// Обновление полей
-	if req.RequireTwoFactor != nil {
-		settings.RequireTwoFactor = *req.RequireTwoFactor
+	if requireTwoFactor != nil {
+		settings.RequireTwoFactor = *requireTwoFactor
 	}
-	if req.TokenTTLMinutes != nil {
-		if *req.TokenTTLMinutes < 1 || *req.TokenTTLMinutes > 1440 {
+	if tokenTTLMinutes != nil {
+		if *tokenTTLMinutes < 1 || *tokenTTLMinutes > 1440 {
 			return nil, fmt.Errorf("invalid token TTL")
 		}
-		settings.TokenTTLMinutes = *req.TokenTTLMinutes
+		settings.TokenTTLMinutes = *tokenTTLMinutes
 	}
-	if req.RefreshTokenTTLDays != nil {
-		if *req.RefreshTokenTTLDays < 1 || *req.RefreshTokenTTLDays > 365 {
+	if refreshTokenTTLDays != nil {
+		if *refreshTokenTTLDays < 1 || *refreshTokenTTLDays > 365 {
 			return nil, fmt.Errorf("invalid refresh token TTL")
 		}
-		settings.RefreshTokenTTLDays = *req.RefreshTokenTTLDays
+		settings.RefreshTokenTTLDays = *refreshTokenTTLDays
 	}
-	if req.MinPasswordLength != nil {
-		if *req.MinPasswordLength < 6 || *req.MinPasswordLength > 128 {
+	if minPasswordLength != nil {
+		if *minPasswordLength < 6 || *minPasswordLength > 128 {
 			return nil, fmt.Errorf("invalid min password length")
 		}
-		settings.MinPasswordLength = *req.MinPasswordLength
+		settings.MinPasswordLength = *minPasswordLength
 	}
-	if req.RequirePasswordComplexity != nil {
-		settings.RequirePasswordComplexity = *req.RequirePasswordComplexity
+	if requirePasswordComplexity != nil {
+		settings.RequirePasswordComplexity = *requirePasswordComplexity
 	}
 
 	// Сохранение настроек
