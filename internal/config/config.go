@@ -38,7 +38,7 @@ func NewConfig() *Config {
 	}
 
 	pgCfg := &PgConfig{
-		Host:     getEnv("POSTGRES_HOST", "fast-sobes-auth-db"),
+		Host:     getEnv("POSTGRES_HOST", "fs-auth-postgres"),
 		Port:     getIntEnv("POSTGRES_PORT", 5432),
 		User:     getEnv("POSTGRES_USER", "postgres"),
 		Password: getEnv("POSTGRES_PASSWORD", "postgres"),

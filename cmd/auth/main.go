@@ -17,9 +17,16 @@ func main() {
 	metrics.Run()
 	defer log.Stop()
 
-	db, err := postgres.NewPostgres((*postgres.Config)(cfg.Pg), log)
+	db, err := postgres.NewPostgres((*postgres.Config)(cfg.Pg))
+	log.Infof(
+		"database config: host=%s port=%d user=%s pass=%s db=%s",
+		cfg.Pg.Host,
+		cfg.Pg.Port,
+		cfg.Pg.User,
+		cfg.Pg.DBName,
+	)
 	if err != nil {
-		log.Fatal("failed to connect to database : %v", err)
+		log.Fatal("failed to connect to database: %v", err)
 	}
 
 	a := app.NewApp(cfg, db, log)
