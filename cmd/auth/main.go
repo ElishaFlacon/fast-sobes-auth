@@ -19,7 +19,7 @@ func main() {
 
 	db, err := postgres.NewPostgres((*postgres.Config)(cfg.Pg))
 	log.Infof(
-		"database config: host=%s port=%d user=%s pass=%s db=%s",
+		"database config: host=%s port=%d user=%s db=%s",
 		cfg.Pg.Host,
 		cfg.Pg.Port,
 		cfg.Pg.User,
