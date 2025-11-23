@@ -50,6 +50,8 @@ func NewApp(cfg *config.Config, db *gorm.DB, log domain.Logger) App {
 
 	// === REGISTER HANDLERS ===
 	a.provider.HelloHandler().RegisterImplementation(a.server)
+	a.provider.AuthHandler().RegisterImplementation(a.server)
+	a.provider.SettingsHandler().RegisterImplementation(a.server)
 
 	return a
 }
