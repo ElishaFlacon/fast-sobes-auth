@@ -1,4 +1,4 @@
-package auth
+package tokens
 
 import (
 	"context"
@@ -6,17 +6,6 @@ import (
 
 	"github.com/ElishaFlacon/fast-sobes-auth/internal/domain"
 )
-
-func (u *usecase) VerifyToken(ctx context.Context, token string) (*domain.TokenInfo, error) {
-	u.log.Infof("Verify token")
-
-	tokenInfo, err := u.tokenRepo.VerifyAccessToken(ctx, token)
-	if err != nil {
-		return &domain.TokenInfo{Valid: false}, nil
-	}
-
-	return tokenInfo, nil
-}
 
 func (u *usecase) RefreshToken(ctx context.Context, refreshToken string) (*domain.AuthResult, error) {
 	u.log.Infof("Refresh token")
@@ -45,24 +34,4 @@ func (u *usecase) RefreshToken(ctx context.Context, refreshToken string) (*domai
 
 	// Создание новых токенов
 	return u.createAuthTokens(ctx, user)
-}
-
-func (u *usecase) Logout(ctx context.Context, token, refreshToken string) error {
-	u.log.Infof("Logout")
-
-	// Отзыв access token
-	if token != "" {
-		if err := u.tokenRepo.RevokeAccessToken(ctx, token); err != nil {
-			u.log.Errorf("Failed to revoke access token: %v", err)
-		}
-	}
-
-	// Отзыв refresh token
-	if refreshToken != "" {
-		if err := u.tokenRepo.RevokeRefreshToken(ctx, refreshToken); err != nil {
-			u.log.Errorf("Failed to revoke refresh token: %v", err)
-		}
-	}
-
-	return nil
 }

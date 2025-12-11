@@ -20,6 +20,7 @@ require (
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -29,9 +30,11 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/pquerna/otp v1.5.0 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.65.0 // indirect
 	github.com/prometheus/procfs v0.16.1 // indirect
+	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e // indirect
 	github.com/spf13/pflag v1.0.9 // indirect
 	golang.org/x/net v0.40.0 // indirect
 	golang.org/x/sync v0.14.0 // indirect

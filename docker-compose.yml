@@ -11,6 +11,7 @@ services:
     restart: always
     volumes:
       - ./:/app
+      - .logs/:/app/.logs
     working_dir: /app
     networks:
       - fs-auth-backend
