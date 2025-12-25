@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	ID               string
+	Id               int64
 	Email            string
 	PermissionLevel  int32
 	Disabled         bool
@@ -16,7 +16,7 @@ type User struct {
 
 type UserList struct {
 	Users    []*User
-	Total    int32
+	Total    int64
 	Page     int32
 	PageSize int32
 }

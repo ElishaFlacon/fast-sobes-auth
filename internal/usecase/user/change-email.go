@@ -8,11 +8,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (u *usecase) ChangeEmail(ctx context.Context, userID, newEmail, password string) error {
-	u.log.Infof("Change email for user: %s", userID)
+func (u *usecase) ChangeEmail(ctx context.Context, userId, newEmail, password string) error {
+	u.log.Infof("Change email for user: %s", userId)
 
 	// Проверка пароля
-	passwordHash, err := u.passwordRepo.GetPasswordHash(ctx, userID)
+	passwordHash, err := u.passwordRepo.GetPasswordHash(ctx, userId)
 	if err != nil {
 		return fmt.Errorf("get password: %w", err)
 	}
@@ -31,14 +31,14 @@ func (u *usecase) ChangeEmail(ctx context.Context, userID, newEmail, password st
 	}
 
 	// Удаление старых запросов на смену email
-	if err := u.emailRepo.DeleteUserChangeRequests(ctx, userID); err != nil {
+	if err := u.emailRepo.DeleteUserChangeRequests(ctx, userId); err != nil {
 		u.log.Errorf("Failed to delete old change requests: %v", err)
 	}
 
 	// Создание токена для подтверждения
 	token, err := u.tokenRepo.CreateTempToken(
 		ctx,
-		userID,
+		userId,
 		"email_change",
 		map[string]interface{}{"new_email": newEmail},
 		time.Now().Add(24*time.Hour),
@@ -50,7 +50,7 @@ func (u *usecase) ChangeEmail(ctx context.Context, userID, newEmail, password st
 	// Сохранение запроса на смену email
 	if err := u.emailRepo.CreateChangeRequest(
 		ctx,
-		userID,
+		userId,
 		newEmail,
 		token,
 		time.Now().Add(24*time.Hour),

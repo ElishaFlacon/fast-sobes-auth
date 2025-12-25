@@ -11,13 +11,13 @@ func (u *usecase) RefreshToken(ctx context.Context, refreshToken string) (*domai
 	u.log.Infof("Refresh token")
 
 	// Проверка refresh token
-	userID, err := u.tokenRepo.VerifyRefreshToken(ctx, refreshToken)
+	userId, err := u.tokenRepo.VerifyRefreshToken(ctx, refreshToken)
 	if err != nil {
 		return nil, fmt.Errorf("invalid refresh token")
 	}
 
 	// Получение пользователя
-	user, err := u.userRepo.GetByID(ctx, userID)
+	user, err := u.userRepo.GetById(ctx, userId)
 	if err != nil {
 		return nil, fmt.Errorf("get user: %w", err)
 	}

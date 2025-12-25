@@ -5,10 +5,9 @@ import (
 )
 
 type Settings struct {
-	ID                        string
+	Id                        int64
 	RequireTwoFactor          bool
 	TokenTTLMinutes           int32
-	RefreshTokenTTLDays       int32
 	MinPasswordLength         int32
 	RequirePasswordComplexity bool
 	UpdatedAt                 time.Time

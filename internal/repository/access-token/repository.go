@@ -14,3 +14,9 @@ type repository struct {
 func NewRepository(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
+
+func AutoMigrate(db *gorm.DB) error {
+	return db.AutoMigrate(
+		&AccessToken{},
+	)
+}

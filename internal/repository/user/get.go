@@ -6,13 +6,33 @@ import (
 	"github.com/ElishaFlacon/fast-sobes-auth/internal/domain"
 )
 
-func (r *repository) List(
+func (r *repository) GetById(ctx context.Context, id string) (*domain.User, error) {
+	var model User
+
+	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&model).Error; err != nil {
+		return nil, err
+	}
+
+	return r.toDomain(&model), nil
+}
+
+func (r *repository) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
+	var model User
+
+	if err := r.db.WithContext(ctx).Where("email = ?", email).First(&model).Error; err != nil {
+		return nil, err
+	}
+
+	return r.toDomain(&model), nil
+}
+
+func (r *repository) GetList(
 	ctx context.Context,
 	offset,
 	limit int32,
 	minPermissionLevel *int32,
 	includeDisabled bool,
-) ([]*domain.User, int32, error) {
+) ([]*domain.User, int64, error) {
 	var modelUsers []User
 	var total int64
 
@@ -39,5 +59,5 @@ func (r *repository) List(
 		users[i] = r.toDomain(&model)
 	}
 
-	return users, int32(total), nil
+	return users, total, nil
 }

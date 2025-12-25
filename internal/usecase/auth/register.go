@@ -36,7 +36,7 @@ func (u *usecase) Register(ctx context.Context, email, password string) (*domain
 
 	// Создание пользователя
 	user := &domain.User{
-		ID:               uuid.New().String(),
+		Id:               uuid.New().String(),
 		Email:            email,
 		PermissionLevel:  0,
 		Disabled:         false,
@@ -55,7 +55,7 @@ func (u *usecase) Register(ctx context.Context, email, password string) (*domain
 		return nil, fmt.Errorf("hash password: %w", err)
 	}
 
-	if err := u.passwordRepo.SetPassword(ctx, user.ID, string(hash)); err != nil {
+	if err := u.passwordRepo.SetPassword(ctx, user.Id, string(hash)); err != nil {
 		return nil, fmt.Errorf("save password: %w", err)
 	}
 

@@ -13,20 +13,20 @@ type AuthUsecase interface {
 }
 
 type UserUsecase interface {
-	GetUser(ctx context.Context, userID string) (*domain.User, error)
+	GetUser(ctx context.Context, userId string) (*domain.User, error)
 	UsersList(
 		ctx context.Context,
 		page, pageSize int32,
 		minPermissionLevel *int32,
 		includeDisabled bool,
 	) (*domain.UserList, error)
-	ChangePassword(ctx context.Context, userID, oldPassword, newPassword string) error
-	ChangeEmail(ctx context.Context, userID, newEmail, password string) error
+	ChangePassword(ctx context.Context, userId, oldPassword, newPassword string) error
+	ChangeEmail(ctx context.Context, userId, newEmail, password string) error
 	VerifyEmailChange(ctx context.Context, token string) error
-	UpdatePermissions(ctx context.Context, userID string, permissionLevel int32) (*domain.User, error)
-	DisableUser(ctx context.Context, userID string) error
-	EnableUser(ctx context.Context, userID string) error
-	DeleteUser(ctx context.Context, userID string) error
+	UpdatePermissions(ctx context.Context, userId string, permissionLevel int32) (*domain.User, error)
+	DisableUser(ctx context.Context, userId string) error
+	EnableUser(ctx context.Context, userId string) error
+	DeleteUser(ctx context.Context, userId string) error
 }
 
 type SettingsUsecase interface {

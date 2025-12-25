@@ -8,11 +8,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (u *usecase) ChangePassword(ctx context.Context, userID, oldPassword, newPassword string) error {
-	u.log.Infof("Change password for user: %s", userID)
+func (u *usecase) ChangePassword(ctx context.Context, userId, oldPassword, newPassword string) error {
+	u.log.Infof("Change password for user: %s", userId)
 
 	// Проверка старого пароля
-	oldHash, err := u.passwordRepo.GetPasswordHash(ctx, userID)
+	oldHash, err := u.passwordRepo.GetPasswordHash(ctx, userId)
 	if err != nil {
 		return fmt.Errorf("get password: %w", err)
 	}
@@ -38,12 +38,12 @@ func (u *usecase) ChangePassword(ctx context.Context, userID, oldPassword, newPa
 	}
 
 	// Обновление пароля
-	if err := u.passwordRepo.UpdatePassword(ctx, userID, string(newHash)); err != nil {
+	if err := u.passwordRepo.UpdatePassword(ctx, userId, string(newHash)); err != nil {
 		return fmt.Errorf("update password: %w", err)
 	}
 
 	// Отзыв всех токенов пользователя
-	if err := u.tokenRepo.RevokeAllUserTokens(ctx, userID); err != nil {
+	if err := u.tokenRepo.RevokeAllUserTokens(ctx, userId); err != nil {
 		u.log.Errorf("Failed to revoke user tokens: %v", err)
 	}
 

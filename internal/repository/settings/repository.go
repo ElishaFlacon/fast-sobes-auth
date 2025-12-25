@@ -7,7 +7,7 @@ import (
 
 var _ def.SettingsRepository = (*repository)(nil)
 
-const defaultSettingsID = "default"
+const defaultSettingsId = 0
 
 type repository struct {
 	db *gorm.DB
@@ -15,4 +15,20 @@ type repository struct {
 
 func NewRepository(db *gorm.DB) *repository {
 	return &repository{db: db}
+}
+
+func AutoMigrate(db *gorm.DB) error {
+	return db.AutoMigrate(
+		&Settings{},
+	)
+}
+
+func (r *repository) getDefaultSettings() Settings {
+	return Settings{
+		Id:                        defaultSettingsId,
+		RequireTwoFactor:          false,
+		TokenTTLMinutes:           60,
+		MinPasswordLength:         8,
+		RequirePasswordComplexity: true,
+	}
 }

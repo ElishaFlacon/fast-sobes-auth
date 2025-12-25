@@ -11,7 +11,7 @@ func UserToProto(u *domain.User) *proto.User {
 		return nil
 	}
 	return &proto.User{
-		Id:               u.ID,
+		Id:               u.Id,
 		Email:            u.Email,
 		PermissionLevel:  u.PermissionLevel,
 		Disabled:         u.Disabled,
@@ -26,7 +26,7 @@ func ProtoToUser(u *proto.User) *domain.User {
 		return nil
 	}
 	return &domain.User{
-		ID:               u.Id,
+		Id:               u.Id,
 		Email:            u.Email,
 		PermissionLevel:  u.PermissionLevel,
 		Disabled:         u.Disabled,

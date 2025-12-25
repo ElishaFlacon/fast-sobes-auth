@@ -27,7 +27,7 @@ func (u *usecase) Login(ctx context.Context, email, password string) (*domain.Lo
 	}
 
 	// Проверка пароля
-	passwordHash, err := u.passwordRepo.GetPasswordHash(ctx, user.ID)
+	passwordHash, err := u.passwordRepo.GetPasswordHash(ctx, user.Id)
 	if err != nil {
 		return nil, fmt.Errorf("get password: %w", err)
 	}

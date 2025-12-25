@@ -11,7 +11,7 @@ func SettingsToProto(s *domain.Settings) *proto.Settings {
 		return nil
 	}
 	return &proto.Settings{
-		Id:                        s.ID,
+		Id:                        s.Id,
 		RequireTwoFactor:          s.RequireTwoFactor,
 		TokenTtlMinutes:           s.TokenTTLMinutes,
 		RefreshTokenTtlDays:       s.RefreshTokenTTLDays,
@@ -26,7 +26,7 @@ func ProtoToSettings(s *proto.Settings) *domain.Settings {
 		return nil
 	}
 	return &domain.Settings{
-		ID:                        s.Id,
+		Id:                        s.Id,
 		RequireTwoFactor:          s.RequireTwoFactor,
 		TokenTTLMinutes:           s.TokenTtlMinutes,
 		RefreshTokenTTLDays:       s.RefreshTokenTtlDays,

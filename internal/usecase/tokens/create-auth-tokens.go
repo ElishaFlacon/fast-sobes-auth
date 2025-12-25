@@ -27,11 +27,11 @@ func (u *usecase) createAuthTokens(ctx context.Context, user *domain.User) (*dom
 	refreshExpiresAt := time.Now().Add(u.cfg.RefreshTokenTTL)
 
 	// Сохраняем через репозиторий
-	if err := u.tokenRepo.SaveAccessToken(ctx, accessToken, user.ID, accessExpiresAt); err != nil {
+	if err := u.tokenRepo.SaveAccessToken(ctx, accessToken, user.Id, accessExpiresAt); err != nil {
 		return nil, fmt.Errorf("save access token: %w", err)
 	}
 
-	if err := u.tokenRepo.SaveRefreshToken(ctx, refreshToken, user.ID, refreshExpiresAt); err != nil {
+	if err := u.tokenRepo.SaveRefreshToken(ctx, refreshToken, user.Id, refreshExpiresAt); err != nil {
 		return nil, fmt.Errorf("save refresh token: %w", err)
 	}
 

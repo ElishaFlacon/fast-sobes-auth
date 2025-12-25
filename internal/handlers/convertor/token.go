@@ -11,7 +11,7 @@ func TokenInfoToProto(t *domain.TokenInfo) *proto.VerifyTokenResponse {
 	}
 	return &proto.VerifyTokenResponse{
 		Valid:           t.Valid,
-		UserId:          t.UserID,
+		UserId:          t.UserId,
 		PermissionLevel: t.PermissionLevel,
 		Email:           t.Email,
 	}
@@ -23,7 +23,7 @@ func ProtoToTokenInfo(p *proto.VerifyTokenResponse) *domain.TokenInfo {
 	}
 	return &domain.TokenInfo{
 		Valid:           p.Valid,
-		UserID:          p.UserId,
+		UserId:          p.UserId,
 		PermissionLevel: p.PermissionLevel,
 		Email:           p.Email,
 	}

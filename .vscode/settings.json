@@ -1,9 +1,9 @@
 {
     "go.formatTool": "gofumpt",
     "go.useLanguageServer": true,
-    "gopls": {
-        "formatting.gofumpt": true
-    },
+    // "gopls": {
+    //     "formatting.gofumpt": true
+    // },
     "go.lintTool": "golangci-lint",
     "go.lintFlags": [
         "--fast"

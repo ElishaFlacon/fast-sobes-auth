@@ -6,8 +6,8 @@ import (
 	"github.com/ElishaFlacon/fast-sobes-auth/internal/domain"
 )
 
-func (u *usecase) GetUser(ctx context.Context, userID string) (*domain.User, error) {
-	u.log.Infof("Get user: %s", userID)
+func (u *usecase) GetUser(ctx context.Context, userId string) (*domain.User, error) {
+	u.log.Infof("Get user: %s", userId)
 
-	return u.userRepo.GetByID(ctx, userID)
+	return u.userRepo.GetById(ctx, userId)
 }
