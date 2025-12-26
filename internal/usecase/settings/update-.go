@@ -11,7 +11,6 @@ func (u *usecase) UpdateSettings(
 	ctx context.Context,
 	requireTwoFactor *bool,
 	tokenTTLMinutes *int32,
-	refreshTokenTTLDays *int32,
 	minPasswordLength *int32,
 	requirePasswordComplexity *bool,
 ) (*domain.Settings, error) {
@@ -32,12 +31,6 @@ func (u *usecase) UpdateSettings(
 			return nil, fmt.Errorf("invalid token TTL")
 		}
 		settings.TokenTTLMinutes = *tokenTTLMinutes
-	}
-	if refreshTokenTTLDays != nil {
-		if *refreshTokenTTLDays < 1 || *refreshTokenTTLDays > 365 {
-			return nil, fmt.Errorf("invalid refresh token TTL")
-		}
-		settings.RefreshTokenTTLDays = *refreshTokenTTLDays
 	}
 	if minPasswordLength != nil {
 		if *minPasswordLength < 6 || *minPasswordLength > 128 {

@@ -18,6 +18,7 @@ type UserRepository interface {
 		includeDisabled bool,
 	) ([]*domain.User, int64, error)
 	Create(ctx context.Context, user *domain.User) error
+	Update(ctx context.Context, user *domain.User) error
 	Delete(ctx context.Context, id int64) error
 }
 

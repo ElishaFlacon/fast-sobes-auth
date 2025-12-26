@@ -8,6 +8,7 @@ func (r *repository) toDomain(model *User) *domain.User {
 	return &domain.User{
 		Id:               model.Id,
 		Email:            model.Email,
+		PasswordHash:     model.PasswordHash,
 		PermissionLevel:  model.PermissionLevel,
 		Disabled:         model.Disabled,
 		TwoFactorEnabled: model.TwoFactorEnabled,
@@ -20,6 +21,7 @@ func (r *repository) toModel(domain *domain.User) *User {
 	return &User{
 		Id:               domain.Id,
 		Email:            domain.Email,
+		PasswordHash:     domain.PasswordHash,
 		PermissionLevel:  domain.PermissionLevel,
 		Disabled:         domain.Disabled,
 		TwoFactorEnabled: domain.TwoFactorEnabled,

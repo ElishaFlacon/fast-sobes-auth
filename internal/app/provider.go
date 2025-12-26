@@ -3,20 +3,16 @@ package app
 import (
 	"github.com/ElishaFlacon/fast-sobes-auth/internal/config"
 	"github.com/ElishaFlacon/fast-sobes-auth/internal/domain"
-	authHandler "github.com/ElishaFlacon/fast-sobes-auth/internal/handlers/auth"
-	helloHandler "github.com/ElishaFlacon/fast-sobes-auth/internal/handlers/hello"
-	settingsHandler "github.com/ElishaFlacon/fast-sobes-auth/internal/handlers/settings"
 	"github.com/ElishaFlacon/fast-sobes-auth/internal/repository"
-	emailRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/email"
-	passwordRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/password"
+	accessTokenRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/access-token"
 	settingsRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/settings"
-	tokenRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/token"
-	twoFactorRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/two-factor"
 	userRepository "github.com/ElishaFlacon/fast-sobes-auth/internal/repository/user"
 	"github.com/ElishaFlacon/fast-sobes-auth/internal/usecase"
 	authUsecase "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase/auth"
-	helloUsecase "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase/hello"
+	emailUsecase "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase/email"
 	settingsUsecase "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase/settings"
+	tokensUsecase "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase/tokens"
+	userUsecase "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase/user"
 	"gorm.io/gorm"
 )
 
@@ -28,20 +24,14 @@ type Provider struct {
 	// Usecases
 	settingsUsecase usecase.SettingsUsecase
 	authUsecase     usecase.AuthUsecase
-	helloUsecase    usecase.HelloUsecase
-
-	// gRPC handlers
-	settingsHandler *settingsHandler.Implementation
-	authHandler     *authHandler.Implementation
-	helloHandler    *helloHandler.Implementation
+	userUsecase     usecase.UserUsecase
+	tokensUsecase   usecase.TokensUsecase
+	emailUsecase    usecase.EmailUsecase
 
 	// Repositories
-	emailRepository     repository.EmailRepository
-	twoFactorRepository repository.TwoFactorRepository
-	tokenRepository     repository.TokenRepository
-	passwordRepository  repository.PasswordRepository
-	userRepository      repository.UserRepository
-	settingsRepository  repository.SettingsRepository
+	userRepository        repository.UserRepository
+	accessTokenRepository repository.AccessTokenRepository
+	settingsRepository    repository.SettingsRepository
 }
 
 func NewProvider(cfg *config.Config, db *gorm.DB, log domain.Logger) *Provider {
@@ -50,29 +40,6 @@ func NewProvider(cfg *config.Config, db *gorm.DB, log domain.Logger) *Provider {
 		db:  db,
 		log: log,
 	}
-}
-
-// ----------------- gRPC HANDLER ------------------
-
-func (p *Provider) SettingsHandler() *settingsHandler.Implementation {
-	if p.settingsHandler == nil {
-		p.settingsHandler = settingsHandler.NewImplementation(p.SettingsUsecase())
-	}
-	return p.settingsHandler
-}
-
-func (p *Provider) AuthHandler() *authHandler.Implementation {
-	if p.authHandler == nil {
-		p.authHandler = authHandler.NewImplementation(p.AuthUsecase())
-	}
-	return p.authHandler
-}
-
-func (p *Provider) HelloHandler() *helloHandler.Implementation {
-	if p.helloHandler == nil {
-		p.helloHandler = helloHandler.NewImplementation(p.HelloUsecase())
-	}
-	return p.helloHandler
 }
 
 // -------------------- USECASE --------------------
@@ -89,58 +56,61 @@ func (p *Provider) AuthUsecase() usecase.AuthUsecase {
 		p.authUsecase = authUsecase.NewUsecase(
 			p.log,
 			p.UserRepository(),
-			p.PasswordRepository(),
-			p.TokenRepository(),
-			p.TwoFactorRepository(),
+			p.AccessTokenRepository(),
 			p.SettingsRepository(),
-			p.EmailRepository(),
+			p.EmailUsecase(),
+			"",
 		)
 	}
 	return p.authUsecase
 }
 
-func (p *Provider) HelloUsecase() usecase.HelloUsecase {
-	if p.helloUsecase == nil {
-		p.helloUsecase = helloUsecase.NewUsecase(p.log, nil)
+func (p *Provider) UserUsecase() usecase.UserUsecase {
+	if p.userUsecase == nil {
+		p.userUsecase = userUsecase.NewUsecase(
+			p.log,
+			p.UserRepository(),
+			p.SettingsRepository(),
+			p.AccessTokenRepository(),
+			p.EmailUsecase(),
+		)
 	}
-	return p.helloUsecase
+	return p.userUsecase
+}
+
+func (p *Provider) TokensUsecase() usecase.TokensUsecase {
+	if p.tokensUsecase == nil {
+		p.tokensUsecase = tokensUsecase.NewUsecase(
+			p.log,
+			p.AccessTokenRepository(),
+			p.UserRepository(),
+			"",
+		)
+	}
+	return p.tokensUsecase
+}
+
+func (p *Provider) EmailUsecase() usecase.EmailUsecase {
+	if p.emailUsecase == nil {
+		p.emailUsecase = emailUsecase.NewUsecase(p.log)
+	}
+	return p.emailUsecase
 }
 
 // ------------------ REPOSITORY -------------------
-
-func (p *Provider) EmailRepository() repository.EmailRepository {
-	if p.emailRepository == nil {
-		p.emailRepository = emailRepository.NewRepository(p.db)
-	}
-	return p.emailRepository
-}
-
-func (p *Provider) TwoFactorRepository() repository.TwoFactorRepository {
-	if p.twoFactorRepository == nil {
-		p.twoFactorRepository = twoFactorRepository.NewRepository(p.db)
-	}
-	return p.twoFactorRepository
-}
-
-func (p *Provider) TokenRepository() repository.TokenRepository {
-	if p.tokenRepository == nil {
-		p.tokenRepository = tokenRepository.NewRepository(p.db)
-	}
-	return p.tokenRepository
-}
-
-func (p *Provider) PasswordRepository() repository.PasswordRepository {
-	if p.passwordRepository == nil {
-		p.passwordRepository = passwordRepository.NewRepository(p.db)
-	}
-	return p.passwordRepository
-}
 
 func (p *Provider) UserRepository() repository.UserRepository {
 	if p.userRepository == nil {
 		p.userRepository = userRepository.NewRepository(p.db)
 	}
 	return p.userRepository
+}
+
+func (p *Provider) AccessTokenRepository() repository.AccessTokenRepository {
+	if p.accessTokenRepository == nil {
+		p.accessTokenRepository = accessTokenRepository.NewRepository(p.db)
+	}
+	return p.accessTokenRepository
 }
 
 func (p *Provider) SettingsRepository() repository.SettingsRepository {

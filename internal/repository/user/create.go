@@ -9,5 +9,13 @@ import (
 func (r *repository) Create(ctx context.Context, user *domain.User) error {
 	model := r.toModel(user)
 
-	return r.db.WithContext(ctx).Create(model).Error
+	if err := r.db.WithContext(ctx).Create(model).Error; err != nil {
+		return err
+	}
+
+	user.Id = model.Id
+	user.CreatedAt = model.CreatedAt
+	user.UpdatedAt = model.UpdatedAt
+
+	return nil
 }

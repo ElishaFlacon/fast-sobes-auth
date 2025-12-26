@@ -7,6 +7,7 @@ import (
 type User struct {
 	Id               int64
 	Email            string
+	PasswordHash     string
 	PermissionLevel  int32
 	Disabled         bool
 	TwoFactorEnabled bool

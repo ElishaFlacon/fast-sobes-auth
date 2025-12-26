@@ -7,5 +7,11 @@ import (
 )
 
 func (r *repository) Create(ctx context.Context, token *domain.AccessToken) error {
-	return r.db.WithContext(ctx).Create(token).Error
+	model := r.toModel(token)
+	if err := r.db.WithContext(ctx).Create(model).Error; err != nil {
+		return err
+	}
+
+	token.Id = model.Id
+	return nil
 }

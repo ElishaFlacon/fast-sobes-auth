@@ -9,7 +9,7 @@ import (
 type AuthUsecase interface {
 	Register(ctx context.Context, email, password string) (*domain.RegisterResult, error)
 	Login(ctx context.Context, email, password string) (*domain.LoginResult, error)
-	Logout(ctx context.Context, token, refreshToken string) error
+	Logout(ctx context.Context, token string) error
 }
 
 type UserUsecase interface {
@@ -35,7 +35,6 @@ type SettingsUsecase interface {
 		ctx context.Context,
 		requireTwoFactor *bool,
 		tokenTTLMinutes *int32,
-		refreshTokenTTLDays *int32,
 		minPasswordLength *int32,
 		requirePasswordComplexity *bool,
 	) (*domain.Settings, error)
@@ -44,5 +43,8 @@ type SettingsUsecase interface {
 
 type TokensUsecase interface {
 	VerifyToken(ctx context.Context, token string) (*domain.TokenInfo, error)
-	RefreshToken(ctx context.Context, refreshToken string) (*domain.AuthResult, error)
+}
+
+type EmailUsecase interface {
+	Send(ctx context.Context, to, subject, body string) error
 }

@@ -15,3 +15,12 @@ type LoginResult struct {
 type RegisterResult struct {
 	User *User
 }
+
+type TokenInfo struct {
+	Token     string
+	UserID    int64
+	User      *User
+	ExpiresAt time.Time
+	Revoked   bool
+	Valid     bool
+}

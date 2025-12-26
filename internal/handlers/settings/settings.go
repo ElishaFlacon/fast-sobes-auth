@@ -21,7 +21,6 @@ func (i *Implementation) UpdateSettings(ctx context.Context, req *proto.UpdateSe
 		ctx,
 		req.RequireTwoFactor,
 		req.TokenTtlMinutes,
-		req.RefreshTokenTtlDays,
 		req.MinPasswordLength,
 		req.RequirePasswordComplexity,
 	)
