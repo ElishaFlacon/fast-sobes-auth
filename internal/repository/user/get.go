@@ -6,10 +6,12 @@ import (
 	"github.com/ElishaFlacon/fast-sobes-auth/internal/domain"
 )
 
-func (r *repository) GetById(ctx context.Context, id string) (*domain.User, error) {
+func (r *repository) GetById(ctx context.Context, id int64) (*domain.User, error) {
 	var model User
 
-	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&model).Error; err != nil {
+	if err := r.db.WithContext(ctx).
+		Where(&User{Id: id}).
+		First(&model).Error; err != nil {
 		return nil, err
 	}
 
@@ -19,7 +21,9 @@ func (r *repository) GetById(ctx context.Context, id string) (*domain.User, erro
 func (r *repository) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
 	var model User
 
-	if err := r.db.WithContext(ctx).Where("email = ?", email).First(&model).Error; err != nil {
+	if err := r.db.WithContext(ctx).
+		Where(&User{Email: email}).
+		First(&model).Error; err != nil {
 		return nil, err
 	}
 
@@ -39,11 +43,11 @@ func (r *repository) GetList(
 	query := r.db.WithContext(ctx).Model(&User{})
 
 	if minPermissionLevel != nil {
-		query = query.Where("permission_level >= ?", *minPermissionLevel)
+		query = query.Where(&User{PermissionLevel: *minPermissionLevel})
 	}
 
 	if !includeDisabled {
-		query = query.Where("disabled = ?", false)
+		query = query.Where(&User{Disabled: false})
 	}
 
 	if err := query.Count(&total).Error; err != nil {
