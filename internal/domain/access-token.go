@@ -3,9 +3,9 @@ package domain
 import "time"
 
 type AccessToken struct {
-	Id        int64
-	Token     string
-	UserId    int64
+	ID        int64
+	JTI       string
+	UserID    int64
 	Revoked   bool
 	ExpiresAt time.Time
 	CreatedAt time.Time

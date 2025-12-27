@@ -32,7 +32,7 @@ func (l *MockLogger) Stop() {}
 
 func DefaultSettings() *domain.Settings {
 	return &domain.Settings{
-		Id:                        0,
+		ID:                        0,
 		RequireTwoFactor:          false,
 		TokenTTLMinutes:           60,
 		MinPasswordLength:         8,
@@ -55,7 +55,7 @@ func NewMemoryUserRepo() *MemoryUserRepo {
 	}
 }
 
-func (r *MemoryUserRepo) GetById(_ context.Context, id int64) (*domain.User, error) {
+func (r *MemoryUserRepo) GetByID(_ context.Context, id int64) (*domain.User, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -121,13 +121,13 @@ func (r *MemoryUserRepo) Create(_ context.Context, user *domain.User) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	user.Id = r.nextID
+	user.ID = r.nextID
 	r.nextID++
 	now := time.Now()
 	user.CreatedAt = now
 	user.UpdatedAt = now
 	copy := *user
-	r.users[user.Id] = &copy
+	r.users[user.ID] = &copy
 	return nil
 }
 
@@ -135,11 +135,11 @@ func (r *MemoryUserRepo) Update(_ context.Context, user *domain.User) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	if _, ok := r.users[user.Id]; !ok {
+	if _, ok := r.users[user.ID]; !ok {
 		return gorm.ErrRecordNotFound
 	}
 	copy := *user
-	r.users[user.Id] = &copy
+	r.users[user.ID] = &copy
 	return nil
 }
 
@@ -195,12 +195,12 @@ func (r *MemoryAccessTokenRepo) Revoke(_ context.Context, token string) error {
 	return nil
 }
 
-func (r *MemoryAccessTokenRepo) RevokeAllByUser(_ context.Context, userId int64) error {
+func (r *MemoryAccessTokenRepo) RevokeAllByUser(_ context.Context, userID int64) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
 	for _, t := range r.tokens {
-		if t.UserId == userId {
+		if t.UserID == userID {
 			t.Revoked = true
 		}
 	}
@@ -254,7 +254,7 @@ func (r *MemorySettingsRepo) Reset(_ context.Context) error {
 	defer r.mu.Unlock()
 
 	r.settings = &domain.Settings{
-		Id:                        0,
+		ID:                        0,
 		RequireTwoFactor:          false,
 		TokenTTLMinutes:           60,
 		MinPasswordLength:         8,

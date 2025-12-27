@@ -8,15 +8,15 @@ import (
 	def "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase"
 )
 
-func (u *usecase) UpdatePermissions(ctx context.Context, userId string, permissionLevel int32) (*domain.User, error) {
-	u.log.Infof("Update permissions for user id=%s level=%d", userId, permissionLevel)
+func (u *usecase) UpdatePermissions(ctx context.Context, userID string, permissionLevel int32) (*domain.User, error) {
+	u.log.Infof("Update permissions for user id=%s level=%d", userID, permissionLevel)
 
-	id, err := def.ParseUserID(userId)
+	id, err := def.ParseUserID(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := u.users.GetById(ctx, id)
+	user, err := u.users.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get user: %w", err)
 	}

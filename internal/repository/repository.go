@@ -8,7 +8,7 @@ import (
 )
 
 type UserRepository interface {
-	GetById(ctx context.Context, id int64) (*domain.User, error)
+	GetByID(ctx context.Context, id int64) (*domain.User, error)
 	GetByEmail(ctx context.Context, email string) (*domain.User, error)
 	GetList(
 		ctx context.Context,
@@ -24,9 +24,9 @@ type UserRepository interface {
 
 type AccessTokenRepository interface {
 	Create(ctx context.Context, token *domain.AccessToken) error
-	GetByToken(ctx context.Context, token string) (*domain.AccessToken, error)
-	Revoke(ctx context.Context, token string) error
-	RevokeAllByUser(ctx context.Context, userId int64) error
+	GetByToken(ctx context.Context, jti string) (*domain.AccessToken, error)
+	Revoke(ctx context.Context, jti string) error
+	RevokeAllByUser(ctx context.Context, userID int64) error
 	DeleteExpired(ctx context.Context, now time.Time) error
 }
 type SettingsRepository interface {

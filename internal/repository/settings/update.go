@@ -10,7 +10,7 @@ func (r *repository) Update(ctx context.Context, settings *domain.Settings) erro
 	model := r.toModel(settings)
 
 	err := r.db.WithContext(ctx).Model(&Settings{}).
-		Where("id = ?", defaultSettingsId).
+		Where("id = ?", defaultSettingsID).
 		Updates(model).Error
 
 	return err

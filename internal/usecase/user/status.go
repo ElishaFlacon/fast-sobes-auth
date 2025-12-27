@@ -7,15 +7,15 @@ import (
 	def "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase"
 )
 
-func (u *usecase) DisableUser(ctx context.Context, userId string) error {
-	u.log.Infof("Disable user id=%s", userId)
+func (u *usecase) DisableUser(ctx context.Context, userID string) error {
+	u.log.Infof("Disable user id=%s", userID)
 
-	id, err := def.ParseUserID(userId)
+	id, err := def.ParseUserID(userID)
 	if err != nil {
 		return err
 	}
 
-	user, err := u.users.GetById(ctx, id)
+	user, err := u.users.GetByID(ctx, id)
 	if err != nil {
 		return fmt.Errorf("get user: %w", err)
 	}
@@ -34,15 +34,15 @@ func (u *usecase) DisableUser(ctx context.Context, userId string) error {
 	return nil
 }
 
-func (u *usecase) EnableUser(ctx context.Context, userId string) error {
-	u.log.Infof("Enable user id=%s", userId)
+func (u *usecase) EnableUser(ctx context.Context, userID string) error {
+	u.log.Infof("Enable user id=%s", userID)
 
-	id, err := def.ParseUserID(userId)
+	id, err := def.ParseUserID(userID)
 	if err != nil {
 		return err
 	}
 
-	user, err := u.users.GetById(ctx, id)
+	user, err := u.users.GetByID(ctx, id)
 	if err != nil {
 		return fmt.Errorf("get user: %w", err)
 	}
@@ -57,10 +57,10 @@ func (u *usecase) EnableUser(ctx context.Context, userId string) error {
 	return nil
 }
 
-func (u *usecase) DeleteUser(ctx context.Context, userId string) error {
-	u.log.Infof("Delete user id=%s", userId)
+func (u *usecase) DeleteUser(ctx context.Context, userID string) error {
+	u.log.Infof("Delete user id=%s", userID)
 
-	id, err := def.ParseUserID(userId)
+	id, err := def.ParseUserID(userID)
 	if err != nil {
 		return err
 	}

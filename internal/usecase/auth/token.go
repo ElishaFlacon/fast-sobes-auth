@@ -20,7 +20,7 @@ func (u *usecase) issueAuth(ctx context.Context, user *domain.User) (*domain.Aut
 	expiresAt := now.Add(time.Duration(settings.TokenTTLMinutes) * time.Minute)
 
 	token, err := u.jwt.Sign(jwtmanager.Claims{
-		UserID:          user.Id,
+		UserID:          user.ID,
 		Email:           user.Email,
 		PermissionLevel: user.PermissionLevel,
 		ExpiresAt:       expiresAt.Unix(),
@@ -32,7 +32,7 @@ func (u *usecase) issueAuth(ctx context.Context, user *domain.User) (*domain.Aut
 
 	if err := u.tokens.Create(ctx, &domain.AccessToken{
 		Token:     token,
-		UserId:    user.Id,
+		UserID:    user.ID,
 		Revoked:   false,
 		ExpiresAt: expiresAt,
 		CreatedAt: now,
@@ -40,7 +40,7 @@ func (u *usecase) issueAuth(ctx context.Context, user *domain.User) (*domain.Aut
 		return nil, fmt.Errorf("store token: %w", err)
 	}
 
-	u.log.Infof("Issued token for user_id=%d exp=%s", user.Id, expiresAt.Format(time.RFC3339))
+	u.log.Infof("Issued token for user_id=%d exp=%s", user.ID, expiresAt.Format(time.RFC3339))
 
 	return &domain.AuthResult{
 		AccessToken: token,

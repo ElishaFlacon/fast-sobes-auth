@@ -44,6 +44,7 @@ require (
 )
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.3.0
 	golang.org/x/text v0.25.0 // indirect
 	google.golang.org/grpc v1.74.2
 )

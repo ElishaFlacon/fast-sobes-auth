@@ -34,7 +34,7 @@ func (u *usecase) Login(ctx context.Context, email, password string) (*domain.Lo
 		return nil, err
 	}
 
-	u.log.Infof("User logged in id=%d email=%s", user.Id, user.Email)
+	u.log.Infof("User logged in id=%d email=%s", user.ID, user.Email)
 
 	return &domain.LoginResult{Auth: auth}, nil
 }

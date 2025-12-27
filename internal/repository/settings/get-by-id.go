@@ -6,7 +6,7 @@ import (
 	"github.com/ElishaFlacon/fast-sobes-auth/internal/domain"
 )
 
-func (r *repository) GetById(ctx context.Context, id int64) (*domain.Settings, error) {
+func (r *repository) GetByID(ctx context.Context, id int64) (*domain.Settings, error) {
 	var settings Settings
 
 	err := r.db.WithContext(ctx).

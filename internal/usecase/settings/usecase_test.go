@@ -13,7 +13,7 @@ func TestGetAndResetSettings(t *testing.T) {
 	ctx := context.Background()
 	log := &testutil.MockLogger{}
 	initial := &domain.Settings{
-		Id:                        0,
+		ID:                        0,
 		RequireTwoFactor:          true,
 		TokenTTLMinutes:           30,
 		MinPasswordLength:         10,

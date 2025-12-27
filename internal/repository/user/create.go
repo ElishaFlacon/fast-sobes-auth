@@ -13,7 +13,7 @@ func (r *repository) Create(ctx context.Context, user *domain.User) error {
 		return err
 	}
 
-	user.Id = model.Id
+	user.ID = model.ID
 	user.CreatedAt = model.CreatedAt
 	user.UpdatedAt = model.UpdatedAt
 

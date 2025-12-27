@@ -8,15 +8,15 @@ import (
 	def "github.com/ElishaFlacon/fast-sobes-auth/internal/usecase"
 )
 
-func (u *usecase) GetUser(ctx context.Context, userId string) (*domain.User, error) {
-	u.log.Infof("Get user id=%s", userId)
+func (u *usecase) GetUser(ctx context.Context, userID string) (*domain.User, error) {
+	u.log.Infof("Get user id=%s", userID)
 
-	id, err := def.ParseUserID(userId)
+	id, err := def.ParseUserID(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := u.users.GetById(ctx, id)
+	user, err := u.users.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get user: %w", err)
 	}

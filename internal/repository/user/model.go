@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	Id               int64  `gorm:"primaryKey"`
+	ID               int64  `gorm:"primaryKey"`
 	Email            string `gorm:"uniqueIndex;not null"`
 	PasswordHash     string `gorm:"not null"`
 	PermissionLevel  int32  `gorm:"default:1"`

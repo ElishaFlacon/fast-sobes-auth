@@ -5,7 +5,7 @@ import (
 )
 
 type Settings struct {
-	Id                        int64
+	ID                        int64
 	RequireTwoFactor          bool
 	TokenTTLMinutes           int32
 	MinPasswordLength         int32

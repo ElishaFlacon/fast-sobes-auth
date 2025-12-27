@@ -2,9 +2,9 @@ package accessToken
 
 import "context"
 
-func (r *repository) Revoke(ctx context.Context, token string) error {
+func (r *repository) Revoke(ctx context.Context, jti string) error {
 	return r.db.WithContext(ctx).
 		Model(&AccessToken{}).
-		Where("token = ?", token).
+		Where(&AccessToken{JTI: jti}).
 		Update("revoked", true).Error
 }

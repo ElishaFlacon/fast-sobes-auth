@@ -6,7 +6,7 @@ import (
 	"github.com/ElishaFlacon/fast-sobes-auth/internal/domain"
 )
 
-func (r *repository) UpdateById(ctx context.Context, id int64, settings *domain.Settings) error {
+func (r *repository) UpdateByID(ctx context.Context, id int64, settings *domain.Settings) error {
 	model := r.toModel(settings)
 
 	err := r.db.WithContext(ctx).Model(&Settings{}).

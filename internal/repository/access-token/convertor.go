@@ -6,9 +6,9 @@ import (
 
 func (r *repository) toDomain(model *AccessToken) *domain.AccessToken {
 	return &domain.AccessToken{
-		Id:        model.Id,
-		Token:     model.Token,
-		UserId:    model.UserId,
+		ID:        model.ID,
+		JTI:       model.JTI,
+		UserID:    model.UserID,
 		Revoked:   model.Revoked,
 		ExpiresAt: model.ExpiresAt,
 		CreatedAt: model.CreatedAt,
@@ -17,9 +17,9 @@ func (r *repository) toDomain(model *AccessToken) *domain.AccessToken {
 
 func (r *repository) toModel(domain *domain.AccessToken) *AccessToken {
 	return &AccessToken{
-		Id:        domain.Id,
-		Token:     domain.Token,
-		UserId:    domain.UserId,
+		ID:        domain.ID,
+		JTI:       domain.JTI,
+		UserID:    domain.UserID,
 		Revoked:   domain.Revoked,
 		ExpiresAt: domain.ExpiresAt,
 		CreatedAt: domain.CreatedAt,

@@ -6,7 +6,7 @@ import (
 
 func (r *repository) toDomain(model *User) *domain.User {
 	return &domain.User{
-		Id:               model.Id,
+		ID:               model.ID,
 		Email:            model.Email,
 		PasswordHash:     model.PasswordHash,
 		PermissionLevel:  model.PermissionLevel,
@@ -19,7 +19,7 @@ func (r *repository) toDomain(model *User) *domain.User {
 
 func (r *repository) toModel(domain *domain.User) *User {
 	return &User{
-		Id:               domain.Id,
+		ID:               domain.ID,
 		Email:            domain.Email,
 		PasswordHash:     domain.PasswordHash,
 		PermissionLevel:  domain.PermissionLevel,

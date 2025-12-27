@@ -10,15 +10,15 @@ import (
 	"gorm.io/gorm"
 )
 
-func (u *usecase) ChangeEmail(ctx context.Context, userId, newEmail, password string) error {
-	u.log.Infof("Change email for user id=%s new_email=%s", userId, newEmail)
+func (u *usecase) ChangeEmail(ctx context.Context, userID, newEmail, password string) error {
+	u.log.Infof("Change email for user id=%s new_email=%s", userID, newEmail)
 
-	id, err := def.ParseUserID(userId)
+	id, err := def.ParseUserID(userID)
 	if err != nil {
 		return err
 	}
 
-	user, err := u.users.GetById(ctx, id)
+	user, err := u.users.GetByID(ctx, id)
 	if err != nil {
 		return fmt.Errorf("get user: %w", err)
 	}
@@ -46,13 +46,13 @@ func (u *usecase) ChangeEmail(ctx context.Context, userId, newEmail, password st
 		return fmt.Errorf("update user: %w", err)
 	}
 
-	if err := u.tokens.RevokeAllByUser(ctx, user.Id); err != nil {
+	if err := u.tokens.RevokeAllByUser(ctx, user.ID); err != nil {
 		u.log.Errorf("failed to revoke tokens after email change: %v", err)
 	}
 
-	_ = u.email.Send(ctx, newEmail, "Email changed", fmt.Sprintf("Email for user %d updated", user.Id))
+	_ = u.email.Send(ctx, newEmail, "Email changed", fmt.Sprintf("Email for user %d updated", user.ID))
 
-	u.log.Infof("Email updated for user id=%d", user.Id)
+	u.log.Infof("Email updated for user id=%d", user.ID)
 
 	return nil
 }

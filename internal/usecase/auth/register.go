@@ -54,7 +54,7 @@ func (u *usecase) Register(ctx context.Context, email, password string) (*domain
 		return nil, fmt.Errorf("create user: %w", err)
 	}
 
-	u.log.Infof("User registered id=%d email=%s", user.Id, user.Email)
+	u.log.Infof("User registered id=%d email=%s", user.ID, user.Email)
 
 	return &domain.RegisterResult{
 		User: def.SanitizeUser(user),

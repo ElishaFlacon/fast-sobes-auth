@@ -6,7 +6,7 @@ import (
 
 func (r *repository) toDomain(model *Settings) *domain.Settings {
 	return &domain.Settings{
-		Id:                        model.Id,
+		ID:                        model.ID,
 		RequireTwoFactor:          model.RequireTwoFactor,
 		TokenTTLMinutes:           model.TokenTTLMinutes,
 		MinPasswordLength:         model.MinPasswordLength,
@@ -17,7 +17,7 @@ func (r *repository) toDomain(model *Settings) *domain.Settings {
 
 func (r *repository) toModel(domain *domain.Settings) *Settings {
 	return &Settings{
-		Id:                        domain.Id,
+		ID:                        domain.ID,
 		RequireTwoFactor:          domain.RequireTwoFactor,
 		TokenTTLMinutes:           domain.TokenTTLMinutes,
 		MinPasswordLength:         domain.MinPasswordLength,

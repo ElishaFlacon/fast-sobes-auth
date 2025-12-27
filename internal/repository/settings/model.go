@@ -5,7 +5,7 @@ import (
 )
 
 type Settings struct {
-	Id                        int64 `gorm:"primaryKey"`
+	ID                        int64 `gorm:"primaryKey"`
 	RequireTwoFactor          bool  `gorm:"default:false"`
 	TokenTTLMinutes           int32 `gorm:"default:60"`
 	MinPasswordLength         int32 `gorm:"default:8"`

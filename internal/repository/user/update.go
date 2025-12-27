@@ -11,6 +11,6 @@ func (r *repository) Update(ctx context.Context, user *domain.User) error {
 
 	return r.db.WithContext(ctx).
 		Model(&User{}).
-		Where(&User{Id: user.Id}).
+		Where(&User{ID: user.ID}).
 		Updates(model).Error
 }

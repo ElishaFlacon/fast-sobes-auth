@@ -12,6 +12,6 @@ func (r *repository) Create(ctx context.Context, token *domain.AccessToken) erro
 		return err
 	}
 
-	token.Id = model.Id
+	token.ID = model.ID
 	return nil
 }

@@ -23,7 +23,7 @@ func TestVerifyToken(t *testing.T) {
 	now := time.Now()
 	exp := now.Add(time.Hour)
 	tokenString, err := jwt.Sign(jwtmanager.Claims{
-		UserID:          user.Id,
+		UserID:          user.ID,
 		Email:           user.Email,
 		PermissionLevel: user.PermissionLevel,
 		ExpiresAt:       exp.Unix(),
@@ -35,7 +35,7 @@ func TestVerifyToken(t *testing.T) {
 
 	_ = tokens.Create(ctx, &domain.AccessToken{
 		Token:     tokenString,
-		UserId:    user.Id,
+		UserID:    user.ID,
 		ExpiresAt: exp,
 		CreatedAt: now,
 	})
@@ -47,7 +47,7 @@ func TestVerifyToken(t *testing.T) {
 	if err != nil {
 		t.Fatalf("verify token: %v", err)
 	}
-	if !info.Valid || info.UserID != user.Id {
+	if !info.Valid || info.UserID != user.ID {
 		t.Fatalf("unexpected token info: %+v", info)
 	}
 }
@@ -65,7 +65,7 @@ func TestVerifyTokenFailures(t *testing.T) {
 	now := time.Now()
 	exp := now.Add(-time.Hour) // expired
 	tokenString, _ := jwt.Sign(jwtmanager.Claims{
-		UserID:          user.Id,
+		UserID:          user.ID,
 		Email:           user.Email,
 		PermissionLevel: user.PermissionLevel,
 		ExpiresAt:       exp.Unix(),
@@ -74,7 +74,7 @@ func TestVerifyTokenFailures(t *testing.T) {
 
 	_ = tokens.Create(ctx, &domain.AccessToken{
 		Token:     tokenString,
-		UserId:    user.Id,
+		UserID:    user.ID,
 		ExpiresAt: exp,
 		CreatedAt: now,
 	})
@@ -88,7 +88,7 @@ func TestVerifyTokenFailures(t *testing.T) {
 
 	_ = tokens.Create(ctx, &domain.AccessToken{
 		Token:     "revoked",
-		UserId:    user.Id,
+		UserID:    user.ID,
 		ExpiresAt: now.Add(time.Hour),
 		Revoked:   true,
 		CreatedAt: now,

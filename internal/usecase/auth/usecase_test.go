@@ -95,7 +95,7 @@ func TestLogoutRevokesToken(t *testing.T) {
 	token := "token123"
 	_ = tokens.Create(ctx, &domain.AccessToken{
 		Token:     token,
-		UserId:    1,
+		UserID:    1,
 		ExpiresAt: time.Now().Add(time.Hour),
 		CreatedAt: time.Now(),
 	})
@@ -135,7 +135,7 @@ func TestTokenIssuedWithConfiguredSecret(t *testing.T) {
 	if err != nil {
 		t.Fatalf("verify token: %v", err)
 	}
-	if claims.UserID != user.Id {
+	if claims.UserID != user.ID {
 		t.Fatalf("unexpected user id in token: %d", claims.UserID)
 	}
 }

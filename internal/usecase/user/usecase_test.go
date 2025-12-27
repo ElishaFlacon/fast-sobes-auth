@@ -21,7 +21,7 @@ func TestChangePassword(t *testing.T) {
 	_ = users.Create(ctx, &domain.User{Email: "user@example.com", PasswordHash: oldHash})
 	_ = tokens.Create(ctx, &domain.AccessToken{
 		Token:     "t1",
-		UserId:    1,
+		UserID:    1,
 		ExpiresAt: time.Now().Add(time.Hour),
 		CreatedAt: time.Now(),
 	})
@@ -31,7 +31,7 @@ func TestChangePassword(t *testing.T) {
 		t.Fatalf("change password: %v", err)
 	}
 
-	user, _ := users.GetById(ctx, 1)
+	user, _ := users.GetByID(ctx, 1)
 	if user.PasswordHash == oldHash {
 		t.Fatal("password hash was not updated")
 	}
@@ -53,7 +53,7 @@ func TestChangeEmail(t *testing.T) {
 	_ = users.Create(ctx, &domain.User{Email: "old@example.com", PasswordHash: hash})
 	_ = tokens.Create(ctx, &domain.AccessToken{
 		Token:     "t1",
-		UserId:    1,
+		UserID:    1,
 		ExpiresAt: time.Now().Add(time.Hour),
 		CreatedAt: time.Now(),
 	})
@@ -63,7 +63,7 @@ func TestChangeEmail(t *testing.T) {
 		t.Fatalf("change email: %v", err)
 	}
 
-	user, _ := users.GetById(ctx, 1)
+	user, _ := users.GetByID(ctx, 1)
 	if user.Email != "new@example.com" {
 		t.Fatalf("email not updated: %s", user.Email)
 	}
@@ -98,7 +98,7 @@ func TestUpdatePermissionsAndStatus(t *testing.T) {
 	if err := uc.DisableUser(ctx, "1"); err != nil {
 		t.Fatalf("disable user: %v", err)
 	}
-	disabledUser, _ := users.GetById(ctx, 1)
+	disabledUser, _ := users.GetByID(ctx, 1)
 	if !disabledUser.Disabled {
 		t.Fatal("user not disabled")
 	}
@@ -106,7 +106,7 @@ func TestUpdatePermissionsAndStatus(t *testing.T) {
 	if err := uc.EnableUser(ctx, "1"); err != nil {
 		t.Fatalf("enable user: %v", err)
 	}
-	enabledUser, _ := users.GetById(ctx, 1)
+	enabledUser, _ := users.GetByID(ctx, 1)
 	if enabledUser.Disabled {
 		t.Fatal("user not enabled")
 	}
@@ -122,7 +122,7 @@ func TestDeleteUser(t *testing.T) {
 	_ = users.Create(ctx, &domain.User{Email: "user@example.com", PasswordHash: testutil.PasswordHash("pass1234")})
 	_ = tokens.Create(ctx, &domain.AccessToken{
 		Token:     "t1",
-		UserId:    1,
+		UserID:    1,
 		ExpiresAt: time.Now().Add(time.Hour),
 		CreatedAt: time.Now(),
 	})
@@ -133,7 +133,7 @@ func TestDeleteUser(t *testing.T) {
 		t.Fatalf("delete user: %v", err)
 	}
 
-	if _, err := users.GetById(ctx, 1); err == nil {
+	if _, err := users.GetByID(ctx, 1); err == nil {
 		t.Fatal("user should be deleted")
 	}
 	token, _ := tokens.GetByToken(ctx, "t1")
